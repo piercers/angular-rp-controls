@@ -11,13 +11,13 @@ import {
   ContentChildren,
   Renderer,
   ViewEncapsulation,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {assign, compact, flatten, flow, isNumber, overSome, uniqueId} from 'lodash/fp';
+import {compact, flatten, flow, isNumber, overSome, uniqueId} from 'lodash/fp';
 import {Observable} from 'rxjs/Observable';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/observable/combineLatest';
+import 'rxjs/add/observable/empty';
 import 'rxjs/add/operator/combineLatest';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
@@ -27,10 +27,11 @@ import 'rxjs/add/operator/startWith';
 
 import {notEmpty} from './util/lodash';
 import {BoolToggle} from './util/rxjs';
-import {ControlErrorDirective} from './control-error.directive';
+import {RpControlErrorDirective} from './rp-control-error.directive';
+import {RpFormGroupDirective} from './rp-form-group.directive';
 
 @Component({
-  selector: 'input-control',
+  selector: 'rp-input-control',
   styles: [`
     :host {
       display: block;
@@ -92,10 +93,6 @@ import {ControlErrorDirective} from './control-error.directive';
       top: 1.55rem;
     }
 
-    .rp-controls__input-control + control-errors:not(.is-shown) {
-      visibility: hidden;
-    }
-
     .rp-controls__fieldset {
       margin-top: 1.85rem;
       margin-bottom: 1rem;
@@ -143,45 +140,42 @@ import {ControlErrorDirective} from './control-error.directive';
       <ng-content></ng-content>
     </div>
 
-    <control-errors
-      *ngIf="!hideErrors"
-      [class.is-shown]="control.touched"
-      [control]="control"
-      [messages]="combinedMessages|async"
-    ></control-errors>
+    <rp-control-errors
+      [errors]="control.errors"
+      [touched]="control.touched"
+      [messages]="combinedMessages"
+    ></rp-control-errors>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
-export class InputControlComponent implements OnChanges, OnInit, AfterViewInit {
+export class RpInputControlComponent implements OnChanges, OnInit, AfterViewInit {
   @Input() control = new FormControl();
   @Input() label: string;
   @Input() inline;
   @Input() active;
-  @Input() errorMessages;
-  @Input() hideErrors;
+  @Input('errorMessages') inputErrors = Observable.empty();
   @Input() labelUp = false;
-  @Output('id') _id = new EventEmitter(); // Used only for output
+
+  @Output('id') _id = new EventEmitter();
   @Output() labelClick = new EventEmitter();
+
   @ContentChild('inputControlInput') input;
-  @ContentChildren(ControlErrorDirective) _contentErrors;
+  @ContentChildren(RpControlErrorDirective) _contentErrors;
 
   private id = uniqueId('rp-controls__input-control-');
   private controlValue;
   private hasValue;
   private errors;
-  private hasErrors;
-  private isDown;
-  private combinedMessages;
-  private isActive = BoolToggle();
   private contentErrors = new ReplaySubject(1);
-  private inputErrors = new ReplaySubject(1);
+  public hasErrors;
+  public isDown;
+  public combinedMessages;
+  public isActive = BoolToggle();
 
-  constructor(private renderer: Renderer) {}
+  constructor(private renderer: Renderer, private rpForm: RpFormGroupDirective) {}
 
-  ngOnChanges({active, errorMessages}: SimpleChanges) {
+  ngOnChanges({active}: SimpleChanges) {
     if (active) this.isActive.next(active.currentValue);
-    if (errorMessages) this.inputErrors.next(errorMessages.currentValue || []);
   }
 
   ngOnInit() {
@@ -204,8 +198,7 @@ export class InputControlComponent implements OnChanges, OnInit, AfterViewInit {
       .map(([hasValue, isActive]) => this.labelUp || hasValue || isActive);
 
     this.combinedMessages = Observable.combineLatest(this.contentErrors, this.inputErrors)
-      .map(flow(compact, flatten))
-      .scan((obj, messages) => assign(obj, messages), {});
+      .map(flow(compact, flatten));
   }
 
   ngAfterViewInit() {

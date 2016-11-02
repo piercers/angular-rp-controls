@@ -1,9 +1,9 @@
 import {Directive, Input, OnInit} from '@angular/core';
 
 @Directive({
-  selector: 'select-option',
+  selector: 'rp-option',
 })
-export class SelectOptionDirective implements OnInit {
+export class RpOptionDirective implements OnInit {
   @Input() value: any;
   @Input() label: string;
 

@@ -1,19 +1,20 @@
-import {Component, ChangeDetectionStrategy, Input, OnInit, OnDestroy} from '@angular/core';
+import {Component, Input, OnInit, OnDestroy} from '@angular/core';
 import {FormGroup, FormArray, FormBuilder, FormControl} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
 
 @Component({
-  selector: 'socials-control',
+  selector: 'rp-socials-control',
   template: `
     <div *ngFor="let group of form.controls" [formGroup]="group">
       <label *ngIf="label">{{label}}</label>
-      <select-control label="Network" [control]="group.get('network')">
-        <select-option *ngFor="let option of options" [value]="option.value" [label]="option.label"></select-option>
-      </select-control>
-      <text-control label="Link" [control]="group.get('link')"></text-control>
+
+      <rp-select-control label="Network" formControlName="network">
+        <rp-option *ngFor="let option of options" [value]="option.value" [label]="option.label"></rp-option>
+      </rp-select-control>
+
+      <rp-text-control label="Link" formControlName="link"></rp-text-control>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SocialsControlComponent implements OnInit, OnDestroy {
   @Input() control = new FormControl();

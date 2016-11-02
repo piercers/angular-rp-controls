@@ -1,100 +1,104 @@
-import {Component, ChangeDetectionStrategy} from '@angular/core';
-import {FormBuilder} from '@angular/forms';
+import {Component} from '@angular/core';
+import {FormBuilder, Validators} from '@angular/forms';
 
 @Component({
   selector: 'controls-form',
   template: `
     <h1>Controls Form</h1>
-    <span>Needs to be tab-able (Duration -> Units)</span>
+    <div>Needs to be tab-able (Duration -> Units)</div>
 
-    <form [formGroup]="form">
-      <text-control label="Text Control" [control]="form.get('textControl')"></text-control>
+    <form [formGroup]="form" (rpSubmit)="submit(form.value)" [showErrors]="true">
+      <rp-text-control label="Text Control" formControlName="textControl">
+        <rp-control-error type="required" message="You have GOT to fill this field out."></rp-control-error>
+      </rp-text-control>
 
-      <password-control label="Password Control" [control]="form.get('passwordControl')"></password-control>
+      <rp-password-control label="Password Control" formControlName="passwordControl"></rp-password-control>
 
-      <email-control label="Email Control" [control]="form.get('emailControl')"></email-control>
-      <span>Needs default validation</span>
+      <rp-select-control label="Select Control (Single Select)" formControlName="selectControlSingle">
+        <rp-option *ngFor="let x of [1, 2, 3, 4, 5]" label="Option {{x}}" [value]="x"></rp-option>
+      </rp-select-control>
 
-      <tel-control label="Tel Control" [control]="form.get('telControl')"></tel-control>
-      <span>Needs default validation</span>
-
-      <number-control label="Number Control" [control]="form.get('numberControl')"></number-control>
-
-      <time-control label="Time Control" [control]="form.get('timeControl')"></time-control>
-
-      <duration-control
-        label="Duration"
-        [control]="form.get('durationControl')"
-        placeholder="Minutes, Hours, Days"
-        [units]="{minutes: 'Minutes', hours: 'Hours', days: 'Days'}"
-      ></duration-control>
-
-      <date-control label="Date Control" [control]="form.get('dateControl')"></date-control>
-
-      <address-control label="Address Control" [control]="form.get('addressControl')"></address-control>
-
-      <select-control
+      <rp-select-control
         label="Select Control (Multiple; Limit: 2)"
-        [control]="form.get('selectControl')"
+        formControlName="selectControl"
         [limit]="2"
       >
-        <select-option *ngFor="let x of [1, 2, 3, 4, 5]" label="Option {{x}}" [value]="x"></select-option>
-      </select-control>
+        <rp-option *ngFor="let x of [1, 2, 3, 4, 5]" label="Option {{x}}" [value]="x"></rp-option>
+      </rp-select-control>
 
-      <select-control label="Select Control (Single Select)" [control]="form.get('selectControlSingle')">
-        <select-option *ngFor="let x of [1, 2, 3, 4, 5]" label="Option {{x}}" [value]="x"></select-option>
-      </select-control>
+      <rp-select-control label="Select Control (No Options)" formControlName="selectControlNoOptions"></rp-select-control>
 
-      <select-control label="Select Control (No Options)" [control]="form.get('selectControlNoOptions')"></select-control>
+      <rp-email-control label="Email Control" formControlName="emailControl"></rp-email-control>
 
-      checkbox-control-set
+      <rp-tel-control label="Tel Control" formControlName="telControl"></rp-tel-control>
 
-      <checkbox-control
-        label="Checkbox Control"
-        [control]="form.get('checkboxControl')"
-        [checked]="form.get('checkboxControl').value"
-      ></checkbox-control>
+      <rp-number-control label="Number Control" formControlName="numberControl"></rp-number-control>
 
-      <radio-control-set label="Radio Control Set" [control]="form.get('radioControl')">
-        <radio-control *ngFor="let x of [1, 2, 3, 4, 5]" label="Option {{x}}" [value]="x"></radio-control>
-      </radio-control-set>
+      <rp-time-control label="Time Control" formControlName="timeControl"></rp-time-control>
 
-      <toggle-control label="Toggle Control" [control]="form.get('toggleControl')"></toggle-control>
+      <rp-duration-control
+        label="Duration Control"
+        formControlName="durationControl"
+        [units]="{minutes: 'Minutes', hours: 'Hours', days: 'Days'}"
+      ></rp-duration-control>
 
-      <textarea-control label="Textarea Control" [control]="form.get('textareaControl')"></textarea-control>
+      <rp-date-control label="Date Control" formControlName="dateControl"></rp-date-control>
 
-      <textarea-control label="Textarea Control (No RTE)" [control]="form.get('textareaControlNoRte')" [rte]="false"></textarea-control>
+      <rp-address-control label="Address Control" formControlName="addressControl"></rp-address-control>
 
-      <hours-control label="Hours Control" [control]="form.get('hoursControl')"></hours-control>
+      <rp-checkbox-control label="Checkbox Control" formControlName="checkboxControl"></rp-checkbox-control>
+
+      <rp-toggle-control label="Toggle Control" formControlName="toggleControl"></rp-toggle-control>
+
+      <rp-textarea-control label="Textarea Control" formControlName="textareaControl"></rp-textarea-control>
+
+      <rp-textarea-control label="Textarea Control (No RTE)" formControlName="textareaControlNoRte" [rte]="false"></rp-textarea-control>
+
+      <rp-hours-control label="Hours Control" formControlName="hoursControl"></rp-hours-control>
+
+      <rp-radios-control label="Radios Control" formControlName="radiosControl">
+        <rp-option *ngFor="let x of [1, 2, 3, 4, 5]" [value]="x"></rp-option>
+      </rp-radios-control>
+
+      <rp-checkboxes-control label="Checkboxes Control (Limit: 3)" formControlName="checkboxesControl" [limit]="3">
+        <rp-option *ngFor="let x of [1, 2, 3, 4, 5]" [value]="x" label="Checkbox {{x}}"></rp-option>
+      </rp-checkboxes-control>
+
+      <button type="submit">Submit</button>
     </form>
 
     <code>
       <pre>{{form.valueChanges|async|json}}</pre>
     </code>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ControlsFormComponent {
+    // TODO Make another, pre-filled form
     public form = this.fb.group({
-      textControl: [],
-      passwordControl: [],
-      emailControl: [],
-      telControl: [],
-      numberControl: [],
-      timeControl: [],
-      durationControl: [],
-      dateControl: [],
       addressControl: [],
+      checkboxControl: [true],
+      checkboxesControl: [],
+      dateControl: ['', Validators.required],
+      durationControl: [],
+      emailControl: [],
+      hoursControl: [],
+      numberControl: [0, Validators.required],
+      passwordControl: ['', Validators.required],
+      radiosControl: [],
       selectControl: [[1, 3]],
       selectControlSingle: [2],
       selectControlNoOptions: [],
-      checkboxControl: [true],
-      radioControl: [],
-      toggleControl: [],
+      telControl: [],
       textareaControl: [],
       textareaControlNoRte: [],
-      hoursControl: [],
+      textControl: ['', Validators.required],
+      timeControl: [],
+      toggleControl: [true],
     });
 
   constructor(private fb: FormBuilder) {}
+
+  submit(form) {
+    console.log(`form: `, form);
+  }
 }

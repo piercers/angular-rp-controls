@@ -3,33 +3,33 @@ import {CommonModule} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms';
 
 import {RpControlsSettings, RpControlsCustomize} from './rp-controls-settings.service';
-import {InputControlComponent} from './input-control.component';
-import {AddressControlComponent} from './address-control.component';
-import {CheckboxControlComponent} from './checkbox-control.component';
-import {CheckboxControlSetComponent} from './checkbox-control-set.component';
-import {DateControlComponent} from './date-control.component';
-import {DaysControlComponent} from './days-control.component';
-import {DurationControlComponent} from './duration-control.component';
-import {PasswordControlComponent} from './password-control.component';
-import {SelectControlComponent} from './select-control.component';
-import {SelectOptionDirective} from './select-option.directive';
-import {TelControlComponent} from './tel-control.component';
-import {TimeControlComponent} from './time-control.component';
-import {ToggleControlComponent} from './toggle-control.component';
-import {HoursControlComponent} from './hours/hours-control.component';
-import {HourControlComponent} from './hours/hour-control.component';
-import {TextControlComponent} from './text-control.component';
-import {ControlErrorsComponent} from './control-errors.component';
-import {ControlErrorDirective} from './control-error.directive';
-import {EmailControlComponent} from './email-control.component';
-import {RadioControlComponent} from './radio-control.component';
-import {RadioControlSetComponent} from './radio-control-set.component';
-import {StatusControlComponent} from './status-control.component';
-import {SocialsControlComponent} from './socials-control.component';
-import {TextareaControlComponent} from './textarea-control.component';
-import {NumberControlComponent} from './number-control.component';
+import {RpInputControlComponent} from './rp-input-control.component';
+import {RpAddressControlComponent} from './rp-address-control.component';
+import {RpCheckboxControlComponent} from './rp-checkbox-control.component';
+import {RpCheckboxesControlComponent} from './rp-checkboxes-control.component';
+import {RpDateControlComponent} from './rp-date-control.component';
+import {RpDaysControlComponent} from './rp-days-control.component';
+import {RpDurationControlComponent} from './rp-duration-control.component';
+import {RpPasswordControlComponent} from './rp-password-control.component';
+import {RpSelectControlComponent} from './rp-select-control.component';
+import {RpOptionDirective} from './rp-option.directive';
+import {RpTelControlComponent} from './rp-tel-control.component';
+import {RpTimeControlComponent} from './rp-time-control.component';
+import {RpToggleControlComponent} from './rp-toggle-control.component';
+import {RpHoursControlComponent} from './hours/rp-hours-control.component';
+import {RpHourControlComponent} from './hours/rp-hour-control.component';
+import {RpTextControlComponent} from './rp-text-control.component';
+import {RpControlErrorsComponent} from './rp-control-errors.component';
+import {RpControlErrorDirective} from './rp-control-error.directive';
+import {RpEmailControlComponent} from './rp-email-control.component';
+import {RpRadioControlComponent} from './rp-radio-control.component';
+import {RpRadiosControlComponent} from './rp-radios-control.component';
+import {SocialsControlComponent} from './rp-socials-control.component';
+import {RpTextareaControlComponent} from './rp-textarea-control.component';
+import {RpNumberControlComponent} from './rp-number-control.component';
 import {RpControlsOverlayComponent} from './ui/rp-controls-overlay.component';
 import {RpControlsIconComponent} from './ui/rp-controls-icon.component';
+import {RpFormGroupDirective} from './rp-form-group.directive';
 
 export {RpControlsCustomize} from './rp-controls-settings.service';
 
@@ -39,61 +39,61 @@ export {RpControlsCustomize} from './rp-controls-settings.service';
     ReactiveFormsModule,
   ],
   declarations: [
-    InputControlComponent,
-    AddressControlComponent,
-    CheckboxControlComponent,
-    CheckboxControlSetComponent,
-    DateControlComponent,
-    DaysControlComponent,
-    DurationControlComponent,
-    PasswordControlComponent,
-    SelectControlComponent,
-    SelectOptionDirective,
-    TelControlComponent,
-    TimeControlComponent,
-    ToggleControlComponent,
-    HourControlComponent,
-    HoursControlComponent,
-    TextControlComponent,
-    ControlErrorsComponent,
-    ControlErrorDirective,
-    EmailControlComponent,
-    RadioControlComponent,
-    RadioControlSetComponent,
-    StatusControlComponent,
+    RpInputControlComponent,
+    RpAddressControlComponent,
+    RpCheckboxControlComponent,
+    RpCheckboxesControlComponent,
+    RpDateControlComponent,
+    RpDaysControlComponent,
+    RpDurationControlComponent,
+    RpPasswordControlComponent,
+    RpSelectControlComponent,
+    RpOptionDirective,
+    RpTelControlComponent,
+    RpTimeControlComponent,
+    RpToggleControlComponent,
+    RpHourControlComponent,
+    RpHoursControlComponent,
+    RpTextControlComponent,
+    RpControlErrorsComponent,
+    RpControlErrorDirective,
+    RpEmailControlComponent,
+    RpRadioControlComponent,
+    RpRadiosControlComponent,
     SocialsControlComponent,
-    TextareaControlComponent,
-    NumberControlComponent,
+    RpTextareaControlComponent,
+    RpNumberControlComponent,
     RpControlsOverlayComponent,
     RpControlsIconComponent,
+    RpFormGroupDirective,
   ],
   exports: [
     ReactiveFormsModule,
-    InputControlComponent,
-    AddressControlComponent,
-    CheckboxControlComponent,
-    CheckboxControlSetComponent,
-    DateControlComponent,
-    DaysControlComponent,
-    DurationControlComponent,
-    PasswordControlComponent,
-    SelectControlComponent,
-    SelectOptionDirective,
-    TelControlComponent,
-    TimeControlComponent,
-    ToggleControlComponent,
-    HourControlComponent,
-    HoursControlComponent,
-    TextControlComponent,
-    ControlErrorsComponent,
-    ControlErrorDirective,
-    EmailControlComponent,
-    RadioControlComponent,
-    RadioControlSetComponent,
-    StatusControlComponent,
+    RpInputControlComponent,
+    RpAddressControlComponent,
+    RpCheckboxControlComponent,
+    RpCheckboxesControlComponent,
+    RpDateControlComponent,
+    RpDaysControlComponent,
+    RpDurationControlComponent,
+    RpPasswordControlComponent,
+    RpSelectControlComponent,
+    RpOptionDirective,
+    RpTelControlComponent,
+    RpTimeControlComponent,
+    RpToggleControlComponent,
+    RpHourControlComponent,
+    RpHoursControlComponent,
+    RpTextControlComponent,
+    RpControlErrorsComponent,
+    RpControlErrorDirective,
+    RpEmailControlComponent,
+    RpRadioControlComponent,
+    RpRadiosControlComponent,
     SocialsControlComponent,
-    TextareaControlComponent,
-    NumberControlComponent,
+    RpTextareaControlComponent,
+    RpNumberControlComponent,
+    RpFormGroupDirective,
   ],
 })
 export class RpControlsModule {
@@ -101,6 +101,6 @@ export class RpControlsModule {
     return {
       ngModule: RpControlsModule,
       providers: [RpControlsSettings, RpControlsCustomize],
-    }
+    };
   }
 }
