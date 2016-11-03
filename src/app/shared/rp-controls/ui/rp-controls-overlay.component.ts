@@ -1,4 +1,12 @@
-import {Component, ChangeDetectionStrategy, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  HostBinding,
+} from '@angular/core';
 
 @Component({
   selector: 'rp-controls-overlay',
@@ -12,18 +20,13 @@ import {Component, ChangeDetectionStrategy, Input, OnChanges, OnInit, SimpleChan
       z-index: 1;
     }
   `],
-  host: {
-    '[class.is-shown]': 'open',
-    '[style.background-color]': 'color',
-    '[style.opacity]': 'opacity',
-  },
   template: ``,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RpControlsOverlayComponent implements OnChanges, OnInit {
-  @Input() open = false;
-  @Input() opacity = .66;
-  @Input() color = 'white';
+  @Input() @HostBinding('class.is-shown') open = false;
+  @Input() @HostBinding('style.opacity') opacity = .66;
+  @Input() @HostBinding('style.background-color') color = 'white';
   @Input() overlayClass = 'is-open';
 
   private bodyEl;
