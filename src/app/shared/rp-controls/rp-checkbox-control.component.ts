@@ -8,6 +8,7 @@ import {
   OnDestroy,
   ContentChildren,
   HostBinding,
+  Optional,
 } from '@angular/core';
 import {ControlValueAccessor, AbstractControl, FormGroup, FormControl} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
@@ -132,14 +133,14 @@ export class RpCheckboxControlComponent implements ControlValueAccessor, OnChang
 
   public onChange = (x: any) => {}
 
-  constructor(private rpFormGroup: RpFormGroupDirective, private settings: RpControlsSettings) {}
+  constructor(@Optional() private rpFormGroup: RpFormGroupDirective, private settings: RpControlsSettings) {}
 
   ngOnChanges({disabled}: SimpleChanges) {
     if (disabled) this.disable(disabled.currentValue);
   }
 
   ngOnInit() {
-    this.form = this.rpFormGroup.form;
+    this.form = this.rpFormGroup ? this.rpFormGroup.form : new FormGroup({});
 
     this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
 

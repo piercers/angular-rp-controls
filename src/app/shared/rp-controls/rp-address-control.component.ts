@@ -3,6 +3,7 @@ import {
   OnInit,
   OnDestroy,
   Input,
+  Optional,
 } from '@angular/core';
 import {FormGroup, FormControl, FormBuilder, AbstractControl, ControlValueAccessor} from '@angular/forms';
 import {entries} from 'lodash/fp';
@@ -63,10 +64,10 @@ export class RpAddressControlComponent implements ControlValueAccessor, OnInit, 
 
   public onChange = (x: any) => {};
 
-  constructor(private rpFormGroup: RpFormGroupDirective, private fb: FormBuilder) {}
+  constructor(@Optional() private rpFormGroup: RpFormGroupDirective, private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.form = this.rpFormGroup.form;
+    this.form = this.rpFormGroup ? this.rpFormGroup.form : new FormGroup({});
 
     this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
   }

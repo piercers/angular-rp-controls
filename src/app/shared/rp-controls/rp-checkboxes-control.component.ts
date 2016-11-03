@@ -4,7 +4,8 @@ import {
   ContentChildren,
   OnInit,
   AfterViewInit,
-  OnDestroy
+  OnDestroy,
+  Optional,
 } from '@angular/core';
 import {ControlValueAccessor, AbstractControl, FormGroup, FormControl} from '@angular/forms';
 import {castArray, compact} from 'lodash/fp';
@@ -65,10 +66,10 @@ export class RpCheckboxesControlComponent implements ControlValueAccessor, OnIni
 
   public onChange = (x: any) => {};
 
-  constructor(private rpFormGroup: RpFormGroupDirective) {}
+  constructor(@Optional() private rpFormGroup: RpFormGroupDirective) {}
 
   ngOnInit() {
-    this.form = this.rpFormGroup.form;
+    this.form = this.rpFormGroup ? this.rpFormGroup.form : new FormGroup({});
 
     this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
   }

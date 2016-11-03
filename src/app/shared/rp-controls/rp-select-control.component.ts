@@ -7,6 +7,7 @@ import {
   AfterViewInit,
   OnDestroy,
   SimpleChanges,
+  Optional,
 } from '@angular/core';
 import {ControlValueAccessor, AbstractControl, FormGroup, FormControl} from '@angular/forms';
 import {castArray, compact, filter, flow, get, includes, map} from 'lodash/fp';
@@ -128,7 +129,7 @@ export class RpSelectControlComponent implements ControlValueAccessor, OnChanges
 
   public onChange = (x: any) => {};
 
-  constructor(private rpFormGroup: RpFormGroupDirective) {}
+  constructor(@Optional() private rpFormGroup: RpFormGroupDirective) {}
 
   ngOnChanges({limit}: SimpleChanges) {
     if (limit) {
@@ -138,7 +139,7 @@ export class RpSelectControlComponent implements ControlValueAccessor, OnChanges
   }
 
   ngOnInit() {
-    this.form = this.rpFormGroup.form;
+    this.form = this.rpFormGroup ? this.rpFormGroup.form : new FormGroup({});
 
     this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
   }

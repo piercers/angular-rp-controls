@@ -5,6 +5,7 @@ import {
   AfterViewInit,
   OnDestroy,
   ContentChildren,
+  Optional,
 } from '@angular/core';
 import {ControlValueAccessor, FormControl, AbstractControl, FormGroup} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
@@ -74,10 +75,10 @@ export class RpNumberControlComponent implements ControlValueAccessor, OnInit, A
 
   public onChange = (x: any) => {};
 
-  constructor(private rpFormGroup: RpFormGroupDirective) {}
+  constructor(@Optional() private rpFormGroup: RpFormGroupDirective) {}
 
   ngOnInit() {
-    this.form = this.rpFormGroup.form;
+    this.form = this.rpFormGroup ? this.rpFormGroup.form : new FormGroup({});
 
     this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
   }

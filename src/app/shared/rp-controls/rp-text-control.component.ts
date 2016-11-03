@@ -5,6 +5,7 @@ import {
   OnInit,
   AfterViewInit,
   OnDestroy,
+  Optional,
 } from '@angular/core';
 import {ControlValueAccessor, AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
@@ -64,10 +65,10 @@ export class RpTextControlComponent implements ControlValueAccessor, OnInit, Aft
 
   public onChange = (x: any) => {};
 
-  constructor(private rpFormGroup: RpFormGroupDirective) {}
+  constructor(@Optional() private rpFormGroup: RpFormGroupDirective) {}
 
   ngOnInit() {
-    this.form = this.rpFormGroup.form;
+    this.form = this.rpFormGroup ? this.rpFormGroup.form : new FormGroup({});
 
     this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
   }

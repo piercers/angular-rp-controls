@@ -5,6 +5,7 @@ import {
   AfterViewInit,
   OnDestroy,
   ContentChildren,
+  Optional,
 } from '@angular/core';
 import {ControlValueAccessor, AbstractControl, FormGroup, FormControl} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
@@ -78,10 +79,10 @@ export class RpDateControlComponent implements ControlValueAccessor, OnInit, Aft
 
   public onChange = (x: any) => {};
 
-  constructor(private rpFormGroup: RpFormGroupDirective) {}
+  constructor(@Optional() private rpFormGroup: RpFormGroupDirective) {}
 
   ngOnInit() {
-    this.form = this.rpFormGroup.form;
+    this.form = this.rpFormGroup ? this.rpFormGroup.form : new FormGroup({});
 
     this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
 

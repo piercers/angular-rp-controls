@@ -5,10 +5,12 @@ import {
   OnChanges,
   OnInit,
   OnDestroy,
+  Optional,
 } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
+import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/combineLatest';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/startWith';
@@ -63,9 +65,9 @@ export class RpControlErrorsComponent implements OnChanges, OnInit, OnDestroy {
     .combineLatest(this.errorMessages)
     .map(([err, messages]: [Object, Map<string, string>]) => Object.keys(err).map(x => messages.get(x) || x));
 
-  public showErrors = this.rpFormGroup.isShowingErrors.$;
+  public showErrors = this.rpFormGroup ? this.rpFormGroup.isShowingErrors.$ : Observable.of(false);
 
-  constructor(private settings: RpControlsSettings, private rpFormGroup: RpFormGroupDirective) {}
+  constructor(private settings: RpControlsSettings, @Optional() private rpFormGroup: RpFormGroupDirective) {}
 
   ngOnChanges({errorsInput}: SimpleChanges) {
     if (errorsInput) this.errorsSubject.next(errorsInput.currentValue || {});

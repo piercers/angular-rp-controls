@@ -5,6 +5,7 @@ import {
   AfterViewInit,
   OnDestroy,
   ContentChildren,
+  Optional,
 } from '@angular/core';
 import {ControlValueAccessor, AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
@@ -86,10 +87,10 @@ export class RpToggleControlComponent implements ControlValueAccessor, OnInit, A
 
   public onChange = (x: any) => {};
 
-  constructor(private settings: RpControlsSettings, private rpFormGroup: RpFormGroupDirective) {}
+  constructor(private settings: RpControlsSettings, @Optional() private rpFormGroup: RpFormGroupDirective) {}
 
   ngOnInit() {
-    this.form = this.rpFormGroup.form;
+    this.form = this.rpFormGroup ? this.rpFormGroup.form : new FormGroup({});
 
     this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
   }

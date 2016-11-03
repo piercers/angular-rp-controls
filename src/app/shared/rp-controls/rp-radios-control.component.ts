@@ -12,7 +12,6 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/takeUntil';
 
 import {provideValueAccessor} from './util/ng';
-import {RpFormGroupDirective} from './rp-form-group.directive';
 import {RpControlErrorDirective} from './rp-control-error.directive';
 import {RpOptionDirective} from './rp-option.directive';
 
@@ -52,8 +51,6 @@ export class RpRadiosControlComponent implements ControlValueAccessor, AfterView
   public onTouch = () => {};
 
   public onChange = (x: any) => {};
-
-  constructor(private rpFormGroup: RpFormGroupDirective) {}
 
   ngAfterViewInit() {
     this.contentErrors.changes

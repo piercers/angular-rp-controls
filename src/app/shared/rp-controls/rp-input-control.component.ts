@@ -28,7 +28,6 @@ import 'rxjs/add/operator/startWith';
 import {notEmpty} from './util/lodash';
 import {BoolToggle} from './util/rxjs';
 import {RpControlErrorDirective} from './rp-control-error.directive';
-import {RpFormGroupDirective} from './rp-form-group.directive';
 
 @Component({
   selector: 'rp-input-control',
@@ -167,12 +166,13 @@ export class RpInputControlComponent implements OnChanges, OnInit, AfterViewInit
   private hasValue;
   private errors;
   private contentErrors = new ReplaySubject(1);
+  private valueChanges = new ReplaySubject(1);
   public hasErrors;
   public isDown;
   public combinedMessages;
   public isActive = BoolToggle();
 
-  constructor(private renderer: Renderer, private rpForm: RpFormGroupDirective) {}
+  constructor(private renderer: Renderer) {}
 
   ngOnChanges({active}: SimpleChanges) {
     if (active) this.isActive.next(active.currentValue);

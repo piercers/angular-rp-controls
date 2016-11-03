@@ -13,7 +13,6 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/takeUntil';
 
 import {provideValueAccessor} from '../util/ng';
-import {RpFormGroupDirective} from '../rp-form-group.directive';
 import {RpControlErrorDirective} from '../rp-control-error.directive';
 
 /**
@@ -71,7 +70,7 @@ export class RpHourControlComponent implements ControlValueAccessor, OnInit, Aft
 
   public onChange = (x: any) => {};
 
-  constructor(private _fb: FormBuilder, private rpFormGroup: RpFormGroupDirective) {}
+  constructor(private _fb: FormBuilder) {}
 
   ngOnInit() {
     this.hourForm.valueChanges

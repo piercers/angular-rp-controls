@@ -14,7 +14,6 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/takeUntil';
 
 import {provideValueAccessor} from '../util/ng';
-import {RpFormGroupDirective} from '../rp-form-group.directive';
 import {RpControlErrorDirective} from '../rp-control-error.directive';
 
 @Component({
@@ -56,7 +55,7 @@ export class RpHoursControlComponent implements ControlValueAccessor, OnInit, Af
 
   public onChange = (x: any) => {};
 
-  constructor(private _fb: FormBuilder, private rpFormGroup: RpFormGroupDirective) {}
+  constructor(private _fb: FormBuilder) {}
 
   ngOnInit() {
     if (!this.hoursForm.controls.length) this.add(); // Ensure there's at least one item in there

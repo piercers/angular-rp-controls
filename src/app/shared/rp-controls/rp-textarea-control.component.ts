@@ -6,6 +6,7 @@ import {
   OnInit,
   AfterViewInit,
   OnDestroy,
+  Optional,
 } from '@angular/core';
 import {FormControl, AbstractControl, FormGroup, ControlValueAccessor} from '@angular/forms';
 import SimpleMDE from 'simplemde';
@@ -81,10 +82,10 @@ export class RpTextareaControlComponent implements ControlValueAccessor, OnInit,
 
   public onChange = (x: any) => {}
 
-  constructor(private rpFormGroup: RpFormGroupDirective) {}
+  constructor(@Optional() private rpFormGroup: RpFormGroupDirective) {}
 
   ngOnInit() {
-    this.form = this.rpFormGroup.form;
+    this.form = this.rpFormGroup ? this.rpFormGroup.form : new FormGroup({});
 
     this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
   }
