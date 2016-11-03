@@ -1,6 +1,8 @@
 import {
   Component,
   Input,
+  SimpleChanges,
+  OnChanges,
   OnInit,
   AfterViewInit,
   OnDestroy,
@@ -87,7 +89,6 @@ import {RpControlsSettings} from './rp-controls-settings.service';
       <input
         [formControl]="control"
         [id]="id"
-        [disabled]="disabled"
         type="checkbox"
       >
 
@@ -106,7 +107,7 @@ import {RpControlsSettings} from './rp-controls-settings.service';
     </rp-input-control>
   `,
 })
-export class RpCheckboxControlComponent implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
+export class RpCheckboxControlComponent implements ControlValueAccessor, OnChanges, OnInit, AfterViewInit, OnDestroy {
   @Input() label: string;
   @Input() @HostBinding('class.is-disabled') disabled = false;
   @Input() @HostBinding('class.is-checked') checked = false;
@@ -133,10 +134,16 @@ export class RpCheckboxControlComponent implements ControlValueAccessor, OnInit,
 
   constructor(private rpFormGroup: RpFormGroupDirective, private settings: RpControlsSettings) {}
 
+  ngOnChanges({disabled}: SimpleChanges) {
+    if (disabled) this.disable(disabled.currentValue);
+  }
+
   ngOnInit() {
     this.form = this.rpFormGroup.form;
 
     this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
+
+    this.disable(this.disabled);
   }
 
   ngAfterViewInit() {
@@ -148,6 +155,13 @@ export class RpCheckboxControlComponent implements ControlValueAccessor, OnInit,
 
   ngOnDestroy() {
     this.onDestroy.next();
+  }
+
+  disable(isDisabled) {
+    if (this.control) {
+      if (isDisabled === false) this.control.enable();
+      if (isDisabled === true) this.control.disable();
+    }
   }
 
   check() {
