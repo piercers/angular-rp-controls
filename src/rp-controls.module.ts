@@ -24,7 +24,6 @@ import {RpControlErrorDirective} from './rp-control-error.directive';
 import {RpEmailControlComponent} from './rp-email-control.component';
 import {RpRadioControlComponent} from './rp-radio-control.component';
 import {RpRadiosControlComponent} from './rp-radios-control.component';
-import {SocialsControlComponent} from './rp-socials-control.component';
 import {RpTextareaControlComponent} from './rp-textarea-control.component';
 import {RpNumberControlComponent} from './rp-number-control.component';
 import {RpControlsOverlayComponent} from './ui/rp-controls-overlay.component';
@@ -60,7 +59,6 @@ export {RpControlsCustomize} from './rp-controls-settings.service';
     RpEmailControlComponent,
     RpRadioControlComponent,
     RpRadiosControlComponent,
-    SocialsControlComponent,
     RpTextareaControlComponent,
     RpNumberControlComponent,
     RpControlsOverlayComponent,
@@ -90,7 +88,6 @@ export {RpControlsCustomize} from './rp-controls-settings.service';
     RpEmailControlComponent,
     RpRadioControlComponent,
     RpRadiosControlComponent,
-    SocialsControlComponent,
     RpTextareaControlComponent,
     RpNumberControlComponent,
     RpFormGroupDirective,
