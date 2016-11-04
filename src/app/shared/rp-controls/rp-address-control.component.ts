@@ -4,20 +4,24 @@ import {
   OnDestroy,
   Input,
   Optional,
+  forwardRef,
 } from '@angular/core';
-import {FormGroup, FormControl, FormBuilder, AbstractControl, ControlValueAccessor} from '@angular/forms';
+import {NG_VALUE_ACCESSOR, FormGroup, FormControl, FormBuilder, AbstractControl, ControlValueAccessor} from '@angular/forms';
 import {entries} from 'lodash/fp';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 
-import {provideValueAccessor} from './util/ng';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 import states from './assets/states';
 
 @Component({
   selector: 'rp-address-control',
   providers: [
-    provideValueAccessor(RpAddressControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpAddressControlComponent),
+      multi: true,
+    },
   ],
   template: `
     <form class="address" [formGroup]="addressForm">

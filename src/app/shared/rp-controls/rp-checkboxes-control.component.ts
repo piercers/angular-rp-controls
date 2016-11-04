@@ -6,15 +6,15 @@ import {
   AfterViewInit,
   OnDestroy,
   Optional,
+  forwardRef,
 } from '@angular/core';
-import {ControlValueAccessor, AbstractControl, FormGroup, FormControl} from '@angular/forms';
+import {ControlValueAccessor, AbstractControl, FormGroup, FormControl, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {castArray, compact} from 'lodash/fp';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/takeUntil';
 
-import {provideValueAccessor} from './util/ng';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 import {RpOptionDirective} from './rp-option.directive';
 import {RpControlErrorDirective} from './rp-control-error.directive';
@@ -22,7 +22,11 @@ import {RpControlErrorDirective} from './rp-control-error.directive';
 @Component({
   selector: 'rp-checkboxes-control',
   providers: [
-    provideValueAccessor(RpCheckboxesControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpCheckboxesControlComponent),
+      multi: true,
+    },
   ],
   template: `
     <fieldset class="rp-controls__fieldset">

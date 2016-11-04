@@ -5,14 +5,14 @@ import {
   OnDestroy,
   Input,
   ContentChildren,
+  forwardRef,
 } from '@angular/core';
-import {ControlValueAccessor, AbstractControl, FormBuilder} from '@angular/forms';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl, FormBuilder, FormGroup} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/takeUntil';
 
-import {provideValueAccessor} from '../util/ng';
 import {RpControlErrorDirective} from '../rp-control-error.directive';
 
 /**
@@ -21,7 +21,11 @@ import {RpControlErrorDirective} from '../rp-control-error.directive';
 @Component({
   selector: 'rp-hour-control',
   providers: [
-    provideValueAccessor(RpHourControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpHourControlComponent),
+      multi: true,
+    },
   ],
   styles: [`
     .hour {
@@ -60,7 +64,7 @@ export class RpHourControlComponent implements ControlValueAccessor, OnInit, Aft
 
   public control: AbstractControl;
 
-  public hourForm = this._fb.group({
+  public hourForm: FormGroup = this._fb.group({
     days: [[]],
     start: [''],
     end: [''],

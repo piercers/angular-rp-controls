@@ -6,15 +6,15 @@ import {
   OnDestroy,
   ContentChildren,
   Optional,
+  forwardRef,
 } from '@angular/core';
-import {ControlValueAccessor, FormGroup, AbstractControl, FormControl} from '@angular/forms';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR, FormGroup, AbstractControl, FormControl} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/takeUntil';
 
-import {provideValueAccessor} from './util/ng';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 import {RpControlErrorDirective} from './rp-control-error.directive';
 
@@ -52,7 +52,11 @@ const days = [
 @Component({
   selector: 'rp-days-control',
   providers: [
-    provideValueAccessor(RpDaysControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpDaysControlComponent),
+      multi: true,
+    },
   ],
   template: `
     <rp-select-control

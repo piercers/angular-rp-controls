@@ -9,15 +9,15 @@ import {
   ContentChildren,
   HostBinding,
   Optional,
+  forwardRef,
 } from '@angular/core';
-import {ControlValueAccessor, AbstractControl, FormGroup, FormControl} from '@angular/forms';
+import {ControlValueAccessor, AbstractControl, FormGroup, FormControl, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/takeUntil';
 
-import {provideValueAccessor} from './util/ng';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 import {RpControlErrorDirective} from './rp-control-error.directive';
 import {RpControlsSettings} from './rp-controls-settings.service';
@@ -25,7 +25,11 @@ import {RpControlsSettings} from './rp-controls-settings.service';
 @Component({
   selector: 'rp-checkbox-control',
   providers: [
-    provideValueAccessor(RpCheckboxControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpCheckboxControlComponent),
+      multi: true,
+    },
   ],
   styles: [`
     :host {

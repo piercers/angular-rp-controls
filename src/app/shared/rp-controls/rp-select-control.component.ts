@@ -8,15 +8,15 @@ import {
   OnDestroy,
   SimpleChanges,
   Optional,
+  forwardRef,
 } from '@angular/core';
-import {ControlValueAccessor, AbstractControl, FormGroup, FormControl} from '@angular/forms';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl, FormGroup, FormControl} from '@angular/forms';
 import {castArray, compact, filter, flow, get, includes, map} from 'lodash/fp';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/startWith';
 
-import {provideValueAccessor} from './util/ng';
 import {BoolToggle} from './util/rxjs';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 import {RpControlErrorDirective} from './rp-control-error.directive';
@@ -26,7 +26,11 @@ import {RpOptionDirective} from './rp-option.directive';
 @Component({
   selector: 'rp-select-control',
   providers: [
-    provideValueAccessor(RpSelectControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpSelectControlComponent),
+      multi: true,
+    },
   ],
   styles: [`
     :host {

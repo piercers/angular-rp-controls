@@ -5,21 +5,25 @@ import {
   AfterViewInit,
   OnDestroy,
   ContentChildren,
+  forwardRef,
 } from '@angular/core';
-import {ControlValueAccessor, FormArray, FormBuilder, AbstractControl} from '@angular/forms';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR, FormArray, FormBuilder, AbstractControl} from '@angular/forms';
 import {castArray, compact} from 'lodash/fp';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/takeUntil';
 
-import {provideValueAccessor} from '../util/ng';
 import {RpControlErrorDirective} from '../rp-control-error.directive';
 
 @Component({
   selector: 'rp-hours-control',
   providers: [
-    provideValueAccessor(RpHoursControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpHoursControlComponent),
+      multi: true,
+    },
   ],
   template: `
     <label *ngIf="label">{{label}}</label>

@@ -1,16 +1,19 @@
-import {Component, ContentChildren, Input, OnInit, AfterViewInit, OnDestroy, Optional} from '@angular/core';
-import {ControlValueAccessor, FormControl, AbstractControl, FormGroup} from '@angular/forms';
+import {Component, ContentChildren, Input, OnInit, AfterViewInit, OnDestroy, Optional, forwardRef} from '@angular/core';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl, AbstractControl, FormGroup} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 
-import {provideValueAccessor} from './util/ng';
 import {RpControlErrorDirective} from './rp-control-error.directive';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 
 @Component({
   selector: 'rp-tel-control',
   providers: [
-    provideValueAccessor(RpTelControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpTelControlComponent),
+      multi: true,
+    },
   ],
   template: `
     <rp-input-control

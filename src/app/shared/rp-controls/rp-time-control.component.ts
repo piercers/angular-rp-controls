@@ -6,8 +6,9 @@ import {
   OnDestroy,
   ContentChildren,
   Optional,
+  forwardRef,
 } from '@angular/core';
-import {FormControl, ControlValueAccessor, AbstractControl, FormGroup} from '@angular/forms';
+import {FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl, FormGroup} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
@@ -16,14 +17,17 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/takeUntil';
 
 import {notEmpty} from './util/lodash';
-import {provideValueAccessor} from './util/ng';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 import {RpControlErrorDirective} from './rp-control-error.directive'
 
 @Component({
   selector: 'rp-time-control',
   providers: [
-    provideValueAccessor(RpTimeControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpTimeControlComponent),
+      multi: true,
+    },
   ],
   styles: [`
     input:not(.show-placeholder):not(.has-value) {

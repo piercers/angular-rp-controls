@@ -7,20 +7,24 @@ import {
   AfterViewInit,
   OnDestroy,
   Optional,
+  forwardRef,
 } from '@angular/core';
-import {FormControl, AbstractControl, FormGroup, ControlValueAccessor} from '@angular/forms';
+import {FormControl, AbstractControl, FormGroup, ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import SimpleMDE from 'simplemde';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 
-import {provideValueAccessor} from './util/ng';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 import {RpControlErrorDirective} from './rp-control-error.directive';
 
 @Component({
   selector: 'rp-textarea-control',
   providers: [
-    provideValueAccessor(RpTextareaControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpTextareaControlComponent),
+      multi: true,
+    },
   ],
   styles: [`
     :host {

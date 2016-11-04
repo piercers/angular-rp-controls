@@ -6,19 +6,23 @@ import {
   OnDestroy,
   ContentChildren,
   Optional,
+  forwardRef,
 } from '@angular/core';
-import {ControlValueAccessor, AbstractControl, FormControl, FormGroup} from '@angular/forms';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 
-import {provideValueAccessor} from './util/ng';
 import {RpControlErrorDirective} from './rp-control-error.directive';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 
 @Component({
   selector: 'rp-email-control',
   providers: [
-    provideValueAccessor(RpEmailControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpEmailControlComponent),
+      multi: true,
+    },
   ],
   template: `
     <rp-input-control

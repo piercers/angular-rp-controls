@@ -5,23 +5,28 @@ import {
   OnChanges,
   OnInit,
   OnDestroy,
+  forwardRef,
 } from '@angular/core';
 import {
   FormBuilder,
   Validators,
   ControlValueAccessor,
   AbstractControl,
+  NG_VALUE_ACCESSOR,
+  FormGroup,
 } from '@angular/forms';
 import {entries, isObject} from 'lodash/fp';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 
-import {provideValueAccessor} from './util/ng';
-
 @Component({
   selector: 'rp-duration-control',
   providers: [
-    provideValueAccessor(RpDurationControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpDurationControlComponent),
+      multi: true,
+    },
   ],
   styles: [`
     .duration {
@@ -61,7 +66,7 @@ export class RpDurationControlComponent implements ControlValueAccessor, OnChang
 
   public value = {};
 
-  public durationForm = this._fb.group({
+  public durationForm: FormGroup = this._fb.group({
     amount: ['', Validators.required],
     units: ['', Validators.compose([
       Validators.required,

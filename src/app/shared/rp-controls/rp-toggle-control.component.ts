@@ -6,22 +6,26 @@ import {
   OnDestroy,
   ContentChildren,
   Optional,
+  forwardRef,
 } from '@angular/core';
-import {ControlValueAccessor, AbstractControl, FormControl, FormGroup} from '@angular/forms';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/takeUntil';
 
 import {RpControlsSettings} from './rp-controls-settings.service';
-import {provideValueAccessor} from './util/ng';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 import {RpControlErrorDirective} from './rp-control-error.directive';
 
 @Component({
   selector: 'rp-toggle-control',
   providers: [
-    provideValueAccessor(RpToggleControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpToggleControlComponent),
+      multi: true,
+    },
   ],
   styles: [`
     input {

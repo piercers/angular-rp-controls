@@ -6,19 +6,23 @@ import {
   OnDestroy,
   Input,
   Optional,
+  forwardRef,
 } from '@angular/core';
-import {ControlValueAccessor, AbstractControl, FormControl, FormGroup} from '@angular/forms';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl, FormControl, FormGroup} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 
-import {provideValueAccessor} from './util/ng';
 import {RpControlErrorDirective} from './rp-control-error.directive';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 
 @Component({
   selector: 'rp-password-control',
   providers: [
-    provideValueAccessor(RpPasswordControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpPasswordControlComponent),
+      multi: true,
+    },
   ],
   template: `
     <rp-input-control

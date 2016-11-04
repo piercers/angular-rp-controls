@@ -4,21 +4,25 @@ import {
   Input,
   AfterViewInit,
   OnDestroy,
+  forwardRef,
 } from '@angular/core';
-import {ControlValueAccessor, AbstractControl} from '@angular/forms';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/takeUntil';
 
-import {provideValueAccessor} from './util/ng';
 import {RpControlErrorDirective} from './rp-control-error.directive';
 import {RpOptionDirective} from './rp-option.directive';
 
 @Component({
   selector: 'rp-radios-control',
   providers: [
-    provideValueAccessor(RpRadiosControlComponent),
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RpRadiosControlComponent),
+      multi: true,
+    },
   ],
   template: `
     <fieldset class="rp-controls__fieldset">
