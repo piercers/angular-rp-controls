@@ -140,6 +140,7 @@ import {RpControlErrorDirective} from './rp-control-error.directive';
     </div>
 
     <rp-control-errors
+      *ngIf="control"
       [errors]="control.errors"
       [touched]="control.touched"
       [messages]="combinedMessages"
@@ -148,7 +149,7 @@ import {RpControlErrorDirective} from './rp-control-error.directive';
   encapsulation: ViewEncapsulation.None,
 })
 export class RpInputControlComponent implements OnChanges, OnInit, AfterViewInit {
-  @Input() control = new FormControl();
+  @Input() control: FormControl;
   @Input() label: string;
   @Input() inline;
   @Input() active;
@@ -181,14 +182,13 @@ export class RpInputControlComponent implements OnChanges, OnInit, AfterViewInit
   ngOnInit() {
     this._id.emit(this.id);
 
-    this.controlValue = this.control.valueChanges
-      .startWith(this.control.value);
+    this.controlValue = this.control ? this.control.valueChanges.startWith(this.control.value) : this.valueChanges;
 
     this.hasValue = this.controlValue
       .map(overSome([isNumber, notEmpty])); // notEmpty() wasn't working with numbers
 
     this.errors = this.controlValue
-      .map(() => this.control.errors || {});
+      .map(() => this.control ? this.control.errors : {});
 
     this.hasErrors = this.errors
       .map(notEmpty);
@@ -207,6 +207,14 @@ export class RpInputControlComponent implements OnChanges, OnInit, AfterViewInit
     if (this.input) { // If an input element has the #inputControlInput ref, handle checking its activity
       const placeholder = this.input.nativeElement.placeholder; // Store initial placeholder text
       this.clearPlaceholder(this.input.nativeElement); // Hide placeholder until focused
+
+      this.valueChanges.next(this.input.nativeElement.value); // Get initial value from input
+
+      this.renderer.listen(
+        this.input.nativeElement,
+        'change',
+        (e) => this.valueChanges.next(e.target.value)
+      );
 
       this.renderer.setElementClass( // Set class to add base styles to input
         this.input.nativeElement,
