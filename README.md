@@ -10,4 +10,5 @@ A set of Angular version 2+ form controls.
 ## TODO
 - [ ] Select control tabbable
 - [ ] Ensure `(change)` works on all controls
+- [ ] SimpleMDE styles
 - [ ] Publish to NPM
