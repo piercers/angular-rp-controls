@@ -1,7 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
-import {HttpModule} from '@angular/http';
 
 import {AppComponent} from './app.component';
 import {RpControlsModule} from '../../src/rp-controls.module';
@@ -10,13 +9,13 @@ import {RpControlsModule} from '../../src/rp-controls.module';
   imports: [
     BrowserModule,
     ReactiveFormsModule,
-    HttpModule,
-    RpControlsModule.forRoot(),
+    RpControlsModule.forRoot({ // See RpControlsSettings for options
+      colors: {
+        primary: '#b4d1e0',
+      },
+    }),
   ],
-  declarations: [
-    AppComponent
-  ],
-  providers: [],
+  declarations: [AppComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

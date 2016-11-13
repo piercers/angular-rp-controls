@@ -28,8 +28,6 @@ import {RpControlsOverlayComponent} from './ui/rp-controls-overlay.component';
 import {RpControlsIconComponent} from './ui/rp-controls-icon.component';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 
-export {RpControlsCustomize} from './rp-controls-settings.service';
-
 @NgModule({
   imports: [
     CommonModule,
@@ -88,10 +86,13 @@ export {RpControlsCustomize} from './rp-controls-settings.service';
   ],
 })
 export class RpControlsModule {
-  static forRoot() {
+  static forRoot(config = {}) {
     return {
       ngModule: RpControlsModule,
-      providers: [RpControlsSettings, RpControlsCustomize],
+      providers: [
+        RpControlsSettings,
+        {provide: RpControlsCustomize, useValue: config},
+      ],
     };
   }
 }
