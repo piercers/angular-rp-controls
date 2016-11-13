@@ -13,7 +13,7 @@ import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/takeUntil';
 
-import {RpControlErrorDirective} from '../rp-control-error.directive';
+import {RpControlErrorDirective} from './rp-control-error.directive';
 
 /**
  * Component to select days of the week with start and end times
@@ -44,8 +44,6 @@ import {RpControlErrorDirective} from '../rp-control-error.directive';
 
       <rp-time-control label="End" formControlName="end"></rp-time-control>
     </div>
-
-    <ng-content></ng-content>
   `,
 })
 export class RpHourControlComponent implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {

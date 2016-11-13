@@ -4,7 +4,6 @@ import {ReactiveFormsModule} from '@angular/forms';
 
 import {RpControlsSettings, RpControlsCustomize} from './rp-controls-settings.service';
 import {RpInputControlComponent} from './rp-input-control.component';
-import {RpAddressControlComponent} from './rp-address-control.component';
 import {RpCheckboxControlComponent} from './rp-checkbox-control.component';
 import {RpCheckboxesControlComponent} from './rp-checkboxes-control.component';
 import {RpDateControlComponent} from './rp-date-control.component';
@@ -16,8 +15,7 @@ import {RpOptionDirective} from './rp-option.directive';
 import {RpTelControlComponent} from './rp-tel-control.component';
 import {RpTimeControlComponent} from './rp-time-control.component';
 import {RpToggleControlComponent} from './rp-toggle-control.component';
-import {RpHoursControlComponent} from './hours/rp-hours-control.component';
-import {RpHourControlComponent} from './hours/rp-hour-control.component';
+import {RpHourControlComponent} from './rp-hour-control.component';
 import {RpTextControlComponent} from './rp-text-control.component';
 import {RpControlErrorsComponent} from './rp-control-errors.component';
 import {RpControlErrorDirective} from './rp-control-error.directive';
@@ -39,7 +37,6 @@ export {RpControlsCustomize} from './rp-controls-settings.service';
   ],
   declarations: [
     RpInputControlComponent,
-    RpAddressControlComponent,
     RpCheckboxControlComponent,
     RpCheckboxesControlComponent,
     RpDateControlComponent,
@@ -52,7 +49,6 @@ export {RpControlsCustomize} from './rp-controls-settings.service';
     RpTimeControlComponent,
     RpToggleControlComponent,
     RpHourControlComponent,
-    RpHoursControlComponent,
     RpTextControlComponent,
     RpControlErrorsComponent,
     RpControlErrorDirective,
@@ -68,7 +64,6 @@ export {RpControlsCustomize} from './rp-controls-settings.service';
   exports: [
     ReactiveFormsModule,
     RpInputControlComponent,
-    RpAddressControlComponent,
     RpCheckboxControlComponent,
     RpCheckboxesControlComponent,
     RpDateControlComponent,
@@ -81,7 +76,6 @@ export {RpControlsCustomize} from './rp-controls-settings.service';
     RpTimeControlComponent,
     RpToggleControlComponent,
     RpHourControlComponent,
-    RpHoursControlComponent,
     RpTextControlComponent,
     RpControlErrorsComponent,
     RpControlErrorDirective,
