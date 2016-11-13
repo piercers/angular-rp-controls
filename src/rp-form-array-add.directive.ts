@@ -37,7 +37,7 @@ const groupConfig = flow(
  * @return {FormGroup}     A configured FormGroup
  */
 const configToGroup = flow(
-  mapValues(x => new FormControl(...x)), // Take each config and turn it into a FormControl
+  mapValues(([value, validator]) => new FormControl(value, validator)), // Take each config and turn it into a FormControl
   config => new FormGroup(config) // Config -> FormGroup
 );
 
