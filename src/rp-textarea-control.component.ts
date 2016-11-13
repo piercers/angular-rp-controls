@@ -8,6 +8,7 @@ import {
   OnDestroy,
   Optional,
   forwardRef,
+  ViewEncapsulation,
 } from '@angular/core';
 import {FormControl, AbstractControl, FormGroup, ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import SimpleMDE from 'simplemde';
@@ -26,19 +27,10 @@ import {RpControlErrorDirective} from './rp-control-error.directive';
       multi: true,
     },
   ],
-  styles: [`
-    :host {
-      display: block;
-    }
-
-    label {
-      display: block;
-    }
-
-    textarea {
-      width: 100%;
-    }
- `],
+  styleUrls: [
+    '../node_modules/simplemde/dist/simplemde.min.css',
+    './rp-textarea-control.css',
+  ],
   template: `
     <rp-input-control
       [control]="control"
@@ -54,10 +46,11 @@ import {RpControlErrorDirective} from './rp-control-error.directive';
         [id]="id"
         (input)="onChange($event.target.value)"
         (blur)="onTouch()"
-        class="input-control"
+        class="rp-input-control__textarea"
       >{{value}}</textarea>
     </rp-input-control>
   `,
+  encapsulation: ViewEncapsulation.None,
 })
 export class RpTextareaControlComponent implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
   @Input() label: string;

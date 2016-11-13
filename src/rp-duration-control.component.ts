@@ -56,7 +56,7 @@ import 'rxjs/add/operator/takeUntil';
 })
 export class RpDurationControlComponent implements ControlValueAccessor, OnChanges, OnInit, OnDestroy {
   @Input() label: string;
-  @Input() units = {};
+  @Input() units = {}; // TODO More helpful error if units aren't passed
   @Input() min; // TODO Implement (Need on number-control)
   @Input() max; // TODO Implement (Need on number-control)
   @Input() formControlName: string;

@@ -1,0 +1,7 @@
+:host {
+  display: block;
+}
+
+.rp-input-control__textarea {
+  width: 100%;
+}

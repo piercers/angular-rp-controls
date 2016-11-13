@@ -11,7 +11,6 @@ A set of Angular version 2+ form controls.
 - [ ] Select control tabbable
 - [ ] Ensure `(change)` works on all controls
 	- Is this needed if we can use `ngModelChange`?
-- [ ] SimpleMDE styles
 - [ ] Publish to NPM
 - [ ] Support nested `formControlName` on RpFormGroupDirective
 - [ ] Check `<input type="date">` (and others?) compatibility
