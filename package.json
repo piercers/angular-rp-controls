@@ -1,9 +1,11 @@
 {
-  "name": "rp-controls",
+  "name": "angular-rp-controls",
   "version": "0.1.0",
   "main": "./bundles/rp-controls.umd.js",
   "module": "./index.js",
+  "author": "Ryan S Pierce <ry@nspierce.com> (http://ryanspierce.com)",
   "license": "MIT",
+  "angular-cli": {},
   "scripts": {
     "build": "npm run build:js && npm run build:umd && npm run build:uglify",
     "build:js": "ngc -p tsconfig.dist.json",
@@ -17,6 +19,7 @@
     "postbuild": "npm run clean:post && npm run copy",
     "prebuild": "npm run clean:pre",
     "pree2e": "webdriver-manager update",
+    "start": "ng serve",
     "test": "ng test"
   },
   "private": true,
@@ -42,6 +45,7 @@
     "@types/jasmine": "^2.2.30",
     "@types/node": "^6.0.42",
     "@types/simplemde": "^1.11.5",
+    "angular-cli": "1.0.0-beta.19-3",
     "codelyzer": "^1.0.0-beta.3",
     "core-js": "^2.4.1",
     "cpy-cli": "^1.0.1",
