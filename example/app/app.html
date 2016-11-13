@@ -1,0 +1,97 @@
+<h1>RP Controls</h1>
+
+<form [formGroup]="form" (rpSubmit)="value = $event">
+  <rp-text-control label="Title" formControlName="title"></rp-text-control>
+
+  <rp-password-control label="Password" formControlName="password"></rp-password-control>
+
+  <rp-email-control label="Email" formControlName="email"></rp-email-control>
+
+  <rp-tel-control label="Phone" formControlName="phone"></rp-tel-control>
+
+  <rp-date-control label="Date" formControlName="date"></rp-date-control>
+
+  <rp-time-control label="Time" formControlName="time"></rp-time-control>
+
+  <rp-number-control label="Number" formControlName="number"></rp-number-control>
+
+  <rp-textarea-control label="Textarea" formControlName="textarea"></rp-textarea-control>
+
+  <rp-textarea-control label="Textarea (No Rich Text Editor)" formControlName="textareaNoRte" [rte]="false"></rp-textarea-control>
+
+  <rp-select-control label="Single Select" formControlName="singleSelect">
+    <rp-option *ngFor="let option of [1, 2, 3, 4, 5]" label="Option {{option}}" [value]="option"></rp-option>
+  </rp-select-control>
+
+  <rp-select-control label="Multiple Select (Limit: 3)" formControlName="multipleSelect" [limit]="3">
+    <rp-option *ngFor="let option of [1, 2, 3, 4, 5]" label="Option {{option}}" [value]="option"></rp-option>
+  </rp-select-control>
+
+  <rp-select-control label="Select (No Options)" formControlName="selectNoOptions"></rp-select-control>
+
+  <rp-toggle-control label="Toggle Control" formControlName="toggleControl"></rp-toggle-control>
+
+  <rp-duration-control
+    label="Duration Control"
+    formControlName="durationControl"
+    [units]="{hours: 'Hours', minutes: 'Minutes', days: 'Days'}"
+  ></rp-duration-control>
+
+  <rp-radios-control label="Radios Control" formControlName="radiosControl">
+    <rp-option *ngFor="let option of [1, 2, 3, 4, 5]" label="Option {{option}}" [value]="option"></rp-option>
+  </rp-radios-control>
+
+  <rp-checkboxes-control label="Checkboxes Control" formControlName="checkboxesControl">
+    <rp-option *ngFor="let option of [1, 2, 3, 4, 5]" label="Option {{option}}" [value]="option"></rp-option>
+  </rp-checkboxes-control>
+
+  <section formGroupName="address">
+    <h2>Address (Nested FormGroup)</h2>
+
+    <rp-text-control label="Street" formControlName="street"></rp-text-control>
+
+    <rp-text-control label="City" formControlName="city"></rp-text-control>
+
+    <rp-select-control label="State" formControlName="state">
+      <rp-option *ngFor="let state of states" [label]="state.label" [value]="state.value"></rp-option>
+    </rp-select-control>
+
+    <rp-text-control label="Zip" formControlName="zip"></rp-text-control>
+  </section>
+
+  <section formArrayName="links">
+    <h2>Links (Easy FormArrays)</h2>
+
+    <button rpFormArrayAdd type="button">Add Link</button>
+
+    <div *ngFor="let c of form.get('links').controls; let i = index">
+      <rp-text-control label="href" [formControl]="c"></rp-text-control>
+
+      <button (click)="form.get('links').removeAt(i)" type="button">Remove Link</button>
+    </div>
+  </section>
+
+  <section formArrayName="hours">
+    <h2>Hours (FormArray of FormGroups)</h2>
+
+    <button rpFormArrayAdd type="button">Add Time</button>
+
+    <div *ngFor="let c of hours.controls; let i = index" [formGroup]="c">
+      <rp-select-control label="Days" formControlName="days" [limit]="0">
+        <rp-option *ngFor="let day of days" [label]="day.label" [value]="day.value"></rp-option>
+      </rp-select-control>
+
+      <rp-time-control label="Start" formControlName="start"></rp-time-control>
+
+      <rp-time-control label="End" formControlName="end"></rp-time-control>
+
+      <button (click)="hours.removeAt(i)" type="button">Remove Link</button>
+    </div>
+  </section>
+
+  <button type="submit">Submit</button>
+</form>
+
+<code *ngIf="value">
+  <pre>{{value|json}}</pre>
+</code>
