@@ -11,7 +11,7 @@ import {
   forwardRef,
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl, FormGroup, FormControl} from '@angular/forms';
-import {castArray, compact, filter, flow, get, includes, map} from 'lodash/fp';
+import {castArray, compact, flow, get, isObjectLike, join, map} from 'lodash/fp';
 import {Subject} from 'rxjs/Subject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/operator/takeUntil';
@@ -21,6 +21,18 @@ import {BoolToggle} from './util/rxjs';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 import {RpControlErrorDirective} from './rp-control-error.directive';
 import {RpOptionDirective} from './rp-option.directive';
+
+const handleTrackBy = (options, trackBy, value) => {
+  if (!isObjectLike(value)) {
+    throw new Error('Input `trackBy` can only be used with object values.');
+  }
+  const getTrackBy = get(trackBy);
+  return options.find(option => getTrackBy(option.value) === getTrackBy(value));
+};
+
+const findMatchingOption = (options, trackBy, value) => {
+  return trackBy ? handleTrackBy(options, trackBy, value) : options.find(option => option.value === value);
+};
 
 // TODO Use <rp-checkboxes-control> and <rp-radios-control>?
 @Component({
@@ -89,10 +101,10 @@ import {RpOptionDirective} from './rp-option.directive';
 
         <rp-checkbox-control
           *ngFor="let option of options"
-          [checked]="set.has(option.value)"
+          [checked]="map.has(key(option.value))"
           (click)="select(option.value, $event)"
           [label]="option.label"
-          [disabled]="!isSingleSelect && !set.has(option.value) && atLimit"
+          [disabled]="!isSingleSelect && !map.has(key(option.value)) && atLimit"
           [hideCheckbox]="isSingleSelect"
           class="select-control__option"
         ></rp-checkbox-control>
@@ -109,21 +121,22 @@ export class RpSelectControlComponent implements ControlValueAccessor, OnChanges
   @Input() placeholder = 'Select...';
   @Input() canResetSingle = false;
   @Input() limit = 1; // Component defaults to single select
+  @Input() trackBy: string;
   @Input() formControlName: string;
   @Input() formControl: AbstractControl;
 
   @ContentChildren(RpOptionDirective) options;
   @ContentChildren(RpControlErrorDirective) _contentErrors;
 
-  public set = new Set();
+  public map = new Map();
 
   private onDestroy = new Subject();
 
-  private isMenuOpen: any = BoolToggle();
+  public isMenuOpen: any = BoolToggle();
 
-  private isSingleSelect = true;
+  public isSingleSelect = true;
 
-  private contentErrors = new ReplaySubject(1);
+  public contentErrors = new ReplaySubject(1);
 
   private form: FormGroup;
 
@@ -163,49 +176,53 @@ export class RpSelectControlComponent implements ControlValueAccessor, OnChanges
    * Returns a string of all selected labels
    */
   get selectedLabels(): string {
-    const options = this.options.toArray();
-    const selectedValues = Array.from(this.set);
-    const selectedLabels = flow(
-      filter(({value}) => includes(value, selectedValues)),
-      compact,
-      map(get('label'))
-    )(options);
-
-    return selectedLabels.join(', ');
+    return flow( // given selected
+      map(value => this.findMatchingOption(value)), // Match values to labels in options
+      map(get('label')), // Get each maching label
+      join(', ') // Convert to comma-separated string
+    )(Array.from(this.map.values()));
   }
 
   get atLimit(): boolean {
     const hasLimit = this.limit !== 0;
-    const atLimit = this.set.size === this.limit;
+    const atLimit = this.map.size === this.limit;
     return hasLimit && atLimit;
   }
 
   get hasValue(): boolean {
-    return this.set.size > 0;
+    return this.map.size > 0;
+  }
+
+  findMatchingOption(value) {
+    return findMatchingOption(this.options.toArray(), this.trackBy, value);
+  }
+
+  key(value) {
+    return this.trackBy ? get(this.trackBy, value) : value;
   }
 
   select(value, event) {
     event.preventDefault(); // For some reason, this function is called twice without this.
 
     if (this.isSingleSelect) {
-      this.set.clear();
-      this.set.add(value);
+      this.map.clear();
+      this.map.set(this.key(value), value);
       this.onChange(value);
       this.isMenuOpen.next(); // Close menu
     } else { // Multiple Select
-      if (this.set.has(value)) {
-        this.set.delete(value);
+      if (this.map.has(this.key(value))) {
+        this.map.delete(this.key(value));
       } else if (!this.atLimit) {
-        this.set.add(value);
+        this.map.set(this.key(value), value);
       }
-      this.onChange(Array.from(this.set));
+      this.onChange(Array.from(this.map.values()));
     }
   }
 
   writeValue(value) {
-    this.set.clear(); // Ensure set is empty on init
+    this.map.clear(); // Ensure set is empty on init
     compact(castArray(value)) // Convert `value` to an array and remove falsy values
-      .forEach(x => this.set.add(x)); // Init set
+      .forEach(x => this.map.set(this.key(x), x)); // Init set
   }
 
   registerOnChange(fn) {
