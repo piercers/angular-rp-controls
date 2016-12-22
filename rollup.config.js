@@ -1,6 +1,6 @@
 export default {
-  entry: './release/index.js',
-  dest: './release/bundles/rp-controls.umd.js',
+  entry: './dist/index.js',
+  dest: './dist/bundles/rp-controls.umd.js',
   format: 'umd',
   moduleName: 'rp.controls',
   globals: {

@@ -1,6 +1,6 @@
 {
   "project": {
-    "version": "1.0.0-beta.19-3",
+    "version": "1.0.0-beta.24",
     "name": "angular-rp-controls"
   },
   "apps": [
@@ -12,8 +12,8 @@
         "favicon.ico"
       ],
       "index": "index.html",
-      "main": "main.ts",
-      "test": "test.ts",
+      "main": "../example/main.ts",
+      "test": "../src/test.ts",
       "tsconfig": "tsconfig.json",
       "prefix": "rp",
       "mobile": false,

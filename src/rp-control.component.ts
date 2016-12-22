@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import {FormControl, FormControlName} from '@angular/forms';
 import {uniqueId} from 'lodash';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/operator/map';
 
@@ -95,7 +96,7 @@ export class RpControlComponent implements OnInit, AfterContentInit {
 
   control: FormControl;
 
-  showErrors$ = this.rpFormGroup.showErrors$;
+  showErrors$: BehaviorSubject<boolean> = this.rpFormGroup.showErrors$;
 
   constructor(
     private renderer: Renderer,
