@@ -1,87 +1,56 @@
-import {
-  Component,
-  Input,
-  SimpleChanges,
-  OnChanges,
-  OnInit,
-  OnDestroy,
-  Optional,
-} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
-import {ReplaySubject} from 'rxjs/ReplaySubject';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/combineLatest';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/startWith';
+import {Component, Input, ChangeDetectionStrategy} from '@angular/core';
+import {assignAll, castArray, constant, defaultTo, entries, flow, isFunction, map, mapValues} from 'lodash/fp';
 
-import {RpControlsSettings} from './rp-controls-settings.service';
-import {RpFormGroupDirective} from './rp-form-group.directive';
-import {RpControlErrorDirective} from './rp-control-error.directive';
+import {RpControlsSettingsService} from './rp-controls-settings.service';
+
+/**
+ * Creates a map of error codes and functions that return error messages
+ */
+const formatMessages = flow( // ((messageMap || [messageMap]) = []): {[errorCode = '']: (value): ''}
+  castArray, // Allow a single map or array of maps
+  map(defaultTo({})), // Ensure we're only dealing with objects
+  assignAll, // Merge all to single object
+  mapValues(x => isFunction(x) ? x : constant(x)) // Cast to function
+);
+
+/**
+ * Resolves error message functions if they exist, otherwise returns error code
+ */
+const getMessagesFromErrors = (messages = {}) => flow( // (errorMap = {}): ''
+  defaultTo({}),
+  entries,
+  map(([code = '', value]) => {
+    const fn = messages[code]; // If exists, it's a known error message
+    return fn ? fn(value) : code; // Unknown error message default to error code
+  })
+);
 
 @Component({
   selector: 'rp-control-errors',
-  styles: [`
-    :host {
-      display: block;
-      min-height: .93rem;
-      margin-bottom: .2rem;
-    }
-
-    .control-errors__message {
-      font-size: .85rem;
-    }
-  `],
   template: `
-    <div *ngIf="(showErrors|async) || touched">
-      <div *ngFor="let error of errors|async" [style.color]="color" class="control-errors__message">{{error}}</div>
-    </div>
+    <ul>
+      <li *ngFor="let error of errorMessages" class="rp-controls__error">{{error}}</li>
+    </ul>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RpControlErrorsComponent implements OnChanges, OnInit, OnDestroy {
-  @Input('errors') errorsInput: any;
-  @Input() touched: boolean;
-  @Input() messages: Observable<RpControlErrorDirective[]>;
-  @Input() color = this.settings.colors.error || 'red';
+export class RpControlErrorsComponent {
+  /**
+   * Map of errors from form control
+   */
+  @Input() errors = {};
 
-  private onDestroy = new Subject();
+  /**
+   * Map of error code keys and error message strings or functions
+   */
+  @Input() messages = {};
 
-  private errorMessagesSubject = new ReplaySubject(1);
-
-  private errorMessages = this.errorMessagesSubject
-    .startWith(new Map([
-      ['required', 'Field is required.'],
-      ['minlength', 'Minimum length not met.'],
-      ['maxlength', 'Too long.'],
-    ]))
-    .scan((map: Map<string, string>, messages: any[]) => {
-      messages.forEach(({type, message}) => map.set(type, message));
-      return map;
-    });
-
-  private errorsSubject = new ReplaySubject(1);
-
-  public errors = this.errorsSubject
-    .combineLatest(this.errorMessages)
-    .map(([err, messages]: [Object, Map<string, string>]) => Object.keys(err).map(x => messages.get(x) || x));
-
-  public showErrors = this.rpFormGroup ? this.rpFormGroup.isShowingErrors.$ : Observable.of(false);
-
-  constructor(private settings: RpControlsSettings, @Optional() private rpFormGroup: RpFormGroupDirective) {}
-
-  ngOnChanges({errorsInput}: SimpleChanges) {
-    if (errorsInput) this.errorsSubject.next(errorsInput.currentValue || {});
+  /**
+   * List of active error message strings
+   */
+  get errorMessages() {
+    return getMessagesFromErrors(formatMessages([this.settings.errors, this.messages]))(this.errors);
   }
 
-  ngOnInit() {
-    if (this.messages) {
-      this.messages
-        .takeUntil(this.onDestroy)
-        .subscribe(x => this.errorMessagesSubject.next(x));
-    }
-  }
-
-  ngOnDestroy() {
-    this.onDestroy.next();
-  }
+  constructor(private settings: RpControlsSettingsService) {}
 }

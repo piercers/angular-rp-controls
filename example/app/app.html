@@ -1,19 +1,27 @@
 <h1>RP Controls</h1>
 
-<form [formGroup]="form" (rpSubmit)="value = $event">
-  <rp-text-control label="Title" formControlName="title"></rp-text-control>
+<form [formGroup]="form" (rpSubmit)="value = $event" (submitFail)="showErrors = $event" [showErrors]="showErrors">
+  <rp-select-control label="Days" formControlName="days" [limit]="0">
+    <rp-option *ngFor="let day of days" [label]="day.label" [value]="day.value"></rp-option>
+  </rp-select-control>
 
-  <rp-password-control label="Password" formControlName="password"></rp-password-control>
+  <rp-select-control label="Rooms" formControlName="selectObjects" [limit]="0">
+    <rp-option *ngFor="let x of rooms" [label]="x.name" [value]="x"></rp-option>
+  </rp-select-control>
 
-  <rp-email-control label="Email" formControlName="email"></rp-email-control>
+  <rp-input-control label="Title" formControlName="title" [errors]="{required: 'A title is required'}"></rp-input-control>
 
-  <rp-tel-control label="Phone" formControlName="phone"></rp-tel-control>
+  <rp-input-control label="Password" formControlName="password" type="password"></rp-input-control>
 
-  <rp-date-control label="Date" formControlName="date"></rp-date-control>
+  <rp-input-control label="Email" formControlName="email" type="email"></rp-input-control>
 
-  <rp-time-control label="Time" formControlName="time"></rp-time-control>
+  <rp-input-control label="Phone" formControlName="phone" type="tel"></rp-input-control>
 
-  <rp-number-control label="Number" formControlName="number"></rp-number-control>
+  <rp-input-control label="Date" formControlName="date" type="date"></rp-input-control>
+
+  <rp-input-control label="Time" formControlName="time" type="time"></rp-input-control>
+
+  <rp-input-control label="Number" formControlName="number" type="number"></rp-input-control>
 
   <rp-textarea-control label="Textarea" formControlName="textarea"></rp-textarea-control>
 
@@ -29,13 +37,7 @@
 
   <rp-select-control label="Select (No Options)" formControlName="selectNoOptions"></rp-select-control>
 
-  <rp-toggle-control label="Toggle Control" formControlName="toggleControl"></rp-toggle-control>
-
-  <rp-duration-control
-    label="Duration Control"
-    formControlName="durationControl"
-    [units]="{hours: 'Hours', minutes: 'Minutes', days: 'Days'}"
-  ></rp-duration-control>
+  <rp-checkbox-control label="Toggle Control" formControlName="toggleControl"></rp-checkbox-control>
 
   <rp-radios-control label="Radios Control" formControlName="radiosControl">
     <rp-option *ngFor="let option of [1, 2, 3, 4, 5]" label="Option {{option}}" [value]="option"></rp-option>
@@ -45,53 +47,54 @@
     <rp-option *ngFor="let option of [1, 2, 3, 4, 5]" label="Option {{option}}" [value]="option"></rp-option>
   </rp-checkboxes-control>
 
-  <section formGroupName="address">
+  <!-- <section formGroupName="address"> -->
+  <section [formGroup]="form.get('address')">
     <h2>Address (Nested FormGroup)</h2>
 
-    <rp-text-control label="Street" formControlName="street"></rp-text-control>
+    <rp-input-control label="Street" formControlName="street"></rp-input-control>
 
-    <rp-text-control label="City" formControlName="city"></rp-text-control>
+    <rp-input-control label="City" formControlName="city"></rp-input-control>
 
     <rp-select-control label="State" formControlName="state">
       <rp-option *ngFor="let state of states" [label]="state.label" [value]="state.value"></rp-option>
     </rp-select-control>
 
-    <rp-text-control label="Zip" formControlName="zip"></rp-text-control>
+    <rp-input-control label="Zip" formControlName="zip"></rp-input-control>
   </section>
 
   <section formArrayName="links">
-    <h2>Links (Easy FormArrays)</h2>
+    <h2 class="rp-controls__label">Links (Easy FormArrays)</h2>
 
     <button rpFormArrayAdd type="button">Add Link</button>
 
     <div *ngFor="let c of form.get('links').controls; let i = index">
-      <rp-text-control label="href" [formControl]="c"></rp-text-control>
+      <rp-input-control label="href" [formControl]="c"></rp-input-control>
 
       <button (click)="form.get('links').removeAt(i)" type="button">Remove Link</button>
     </div>
   </section>
 
   <section formArrayName="hours">
-    <h2>Hours (FormArray of FormGroups)</h2>
-
-    <button rpFormArrayAdd type="button">Add Time</button>
+    <rp-form-array-label title="Hours (FormArray of FormGroups)" itemName="Hour"></rp-form-array-label>
 
     <div *ngFor="let c of hours.controls; let i = index" [formGroup]="c">
       <rp-select-control label="Days" formControlName="days" [limit]="0">
         <rp-option *ngFor="let day of days" [label]="day.label" [value]="day.value"></rp-option>
       </rp-select-control>
 
-      <rp-time-control label="Start" formControlName="start"></rp-time-control>
+      <rp-input-control label="Start" formControlName="start" type="time"></rp-input-control>
 
-      <rp-time-control label="End" formControlName="end"></rp-time-control>
+      <rp-input-control label="End" formControlName="end" type="time"></rp-input-control>
 
       <button (click)="hours.removeAt(i)" type="button">Remove Link</button>
     </div>
   </section>
 
-  <button type="submit">Submit</button>
+  <button [disabled]="showErrors && form.invalid" type="submit">Submit</button>
+
+  <button (click)="form.reset()" type="button">Reset</button>
 </form>
 
-<code *ngIf="value">
-  <pre>{{value|json}}</pre>
+<code>
+  <pre>{{form.value|json}}</pre>
 </code>

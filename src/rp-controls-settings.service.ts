@@ -1,18 +1,30 @@
 import {Injectable, Optional} from '@angular/core';
 import {merge} from 'lodash';
 
-export class RpControlsCustomize {}
+export class RpControlsConfig {}
 
 @Injectable()
-export class RpControlsSettings {
-  public colors = {
+export class RpControlsSettingsService {
+  colors = {
     primary: '#666',
     error: 'red',
-    placeholder: '', // TODO Implement
     accent: '', // TODO Implement
   };
 
-  constructor(@Optional() private customized: RpControlsCustomize) {
-    if (customized) merge(this, customized); // Merges customizations onto class props
+  // TODO Maybe it's best not to have a default theme?
+  theme = 'default'; // TODO Add 'app'
+
+  errors = {
+    required: 'required',
+    minlength: 'minimum length',
+    maxlength: 'maxmimum length',
+  };
+
+  dropdown = {
+    opacity: .4,
+  };
+
+  constructor(@Optional() private config: RpControlsConfig) {
+    if (config) merge(this, config); // Merges customizations onto class props
   }
 }

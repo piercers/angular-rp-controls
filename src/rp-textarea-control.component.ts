@@ -1,105 +1,62 @@
-import {
-  Component,
-  ViewChild,
-  ContentChildren,
-  Input,
-  OnInit,
-  AfterViewInit,
-  OnDestroy,
-  Optional,
-  forwardRef,
-  ViewEncapsulation,
-} from '@angular/core';
-import {FormControl, AbstractControl, FormGroup, ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {Component, forwardRef, Output, EventEmitter, Input, ViewChild, AfterViewInit, OnDestroy} from '@angular/core';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import SimpleMDE from 'simplemde';
-import {Subject} from 'rxjs/Subject';
-import {ReplaySubject} from 'rxjs/ReplaySubject';
-
-import {RpFormGroupDirective} from './rp-form-group.directive';
-import {RpControlErrorDirective} from './rp-control-error.directive';
 
 @Component({
   selector: 'rp-textarea-control',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => RpTextareaControlComponent),
-      multi: true,
-    },
-  ],
-  styleUrls: [
-    '../node_modules/simplemde/dist/simplemde.min.css',
-    './rp-textarea-control.css',
-  ],
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => RpTextareaControlComponent),
+    multi: true,
+  }],
   template: `
-    <rp-input-control
-      [control]="control"
+    <rp-control
+      [value]="value"
       [label]="label"
-      (id)="id = $event"
-      [labelUp]="true"
-      [errorMessages]="_contentErrors"
+      [hasFocus]="hasFocus"
+      [touched]="touched"
     >
       <textarea
-        #textarea
-        #inputControlInput
+        #rpControlInput
+        (input)="onInput($event.target.value)"
+        (focus)="hasFocus = true"
+        (blur)="onBlur()"
         [placeholder]="placeholder"
-        [id]="id"
-        (input)="onChange($event.target.value)"
-        (blur)="onTouch()"
-        class="rp-input-control__textarea"
       >{{value}}</textarea>
-    </rp-input-control>
+    </rp-control>
   `,
-  encapsulation: ViewEncapsulation.None,
 })
-export class RpTextareaControlComponent implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
+export class RpTextareaControlComponent implements ControlValueAccessor, AfterViewInit, OnDestroy {
   @Input() label: string;
+
   @Input() placeholder = '';
+
   @Input() rte = true;
-  @Input() formControlName: string;
-  @Input() formControl: AbstractControl;
 
-  @ViewChild('textarea') textarea;
+  @Output() change = new EventEmitter();
 
-  @ContentChildren(RpControlErrorDirective) contentErrors;
+  @ViewChild('rpControlInput') textarea;
 
-  public editor: SimpleMDE;
+  hasFocus = false;
 
-  private onDestroy = new Subject();
+  touched = false;
 
-  public _contentErrors = new ReplaySubject(1);
+  value: string;
 
-  public value = '';
+  editor: SimpleMDE;
 
-  private form: FormGroup;
+  onChange = (x?: any) => {};
 
-  public control: AbstractControl;
-
-  public onTouch = () => {};
-
-  public onChange = (x: any) => {}
-
-  constructor(@Optional() private rpFormGroup: RpFormGroupDirective) {}
-
-  ngOnInit() {
-    this.form = this.rpFormGroup ? this.rpFormGroup.form : new FormGroup({});
-
-    this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
-  }
+  onTouched = () => {};
 
   ngAfterViewInit() {
-    this.contentErrors.changes
-      .startWith(this.contentErrors)
-      .takeUntil(this.onDestroy)
-      .subscribe(x => this._contentErrors.next(x.toArray()))
-
     if (this.rte) {
       this.editor = new SimpleMDE({
         element: this.textarea.nativeElement,
       });
 
       this.editor.codemirror.on('change', () => {
-        this.onChange(this.editor.value());
+        this.onInput(this.editor.value());
       });
     }
   }
@@ -109,14 +66,21 @@ export class RpTextareaControlComponent implements ControlValueAccessor, OnInit,
       this.editor.toTextArea();
       this.editor = null;
     }
+  }
 
-    this.onDestroy.next();
+  onInput(value) {
+    this.value = value;
+    this.onChange(value);
+  }
+
+  onBlur() {
+    this.hasFocus = false;
+    this.touched = true;
+    this.onTouched();
   }
 
   writeValue(value) {
-    if (value !== undefined) {
-      this.value = value;
-    }
+    this.value = value;
   }
 
   registerOnChange(fn) {
@@ -124,6 +88,6 @@ export class RpTextareaControlComponent implements ControlValueAccessor, OnInit,
   }
 
   registerOnTouched(fn) {
-    this.onTouch = fn;
+    this.onTouched = fn;
   }
 }

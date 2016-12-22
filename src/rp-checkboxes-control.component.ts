@@ -1,113 +1,78 @@
-import {
-  Component,
-  Input,
-  ContentChildren,
-  OnInit,
-  AfterViewInit,
-  OnDestroy,
-  Optional,
-  forwardRef,
-} from '@angular/core';
-import {ControlValueAccessor, AbstractControl, FormGroup, FormControl, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {castArray, compact} from 'lodash/fp';
-import {Subject} from 'rxjs/Subject';
-import {ReplaySubject} from 'rxjs/ReplaySubject';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/operator/takeUntil';
+import {Component, Input, Output, EventEmitter, forwardRef, ContentChildren} from '@angular/core';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {castArray} from 'lodash';
 
-import {RpFormGroupDirective} from './rp-form-group.directive';
-import {RpOptionDirective} from './rp-option.directive';
-import {RpControlErrorDirective} from './rp-control-error.directive';
+import {RpOptionComponent} from './rp-option.component';
 
 @Component({
   selector: 'rp-checkboxes-control',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => RpCheckboxesControlComponent),
-      multi: true,
-    },
-  ],
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => RpCheckboxesControlComponent),
+    multi: true,
+  }],
   template: `
-    <fieldset class="rp-controls__fieldset">
-      <legend *ngIf="label" class="rp-controls__legend">{{label}}</legend>
+    <rp-control [value]="value" [touched]="touched">
+      <fieldset>
+        <legend *ngIf="label">{{label}}</legend>
 
-      <rp-checkbox-control
-        *ngFor="let option of options"
-        (click)="select(option.value, $event)"
-        [checked]="set.has(option.value)"
-        [label]="option.label"
-        [disabled]="!set.has(option.value) && atLimit"
-      ></rp-checkbox-control>
-    </fieldset>
+        <label *ngFor="let x of options">
+          {{x.label}}
 
-    <rp-control-errors
-      [errors]="control.errors"
-      [messages]="contentErrors"
-    ></rp-control-errors>
+          <rp-checkbox-control
+            (click)="select(x.value)"
+            [checked]="selected.has(x.value)"
+            [disabled]="limit !== 0 && selected.size === limit && !selected.has(x.value)"
+          ></rp-checkbox-control>
+        </label>
+      </fieldset>
+    </rp-control>
   `,
 })
-export class RpCheckboxesControlComponent implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
+export class RpCheckboxesControlComponent implements ControlValueAccessor {
   @Input() label: string;
+
   @Input() limit = 0;
-  @Input() formControlName: string;
-  @Input() formControl: AbstractControl;
 
-  @ContentChildren(RpOptionDirective) options;
-  @ContentChildren(RpControlErrorDirective) _contentErrors;
-
-  public set = new Set();
-
-  private onDestroy = new Subject();
-
-  public contentErrors = new ReplaySubject(1);
-
-  private form: FormGroup;
-
-  public control: AbstractControl;
-
-  public onTouch = () => {};
-
-  public onChange = (x: any) => {};
-
-  constructor(@Optional() private rpFormGroup: RpFormGroupDirective) {}
-
-  ngOnInit() {
-    this.form = this.rpFormGroup ? this.rpFormGroup.form : new FormGroup({});
-
-    this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
+  @Input() set value(value) {
+    this.writeValue(value);
   }
 
-  ngAfterViewInit() {
-    this._contentErrors.changes
-      .takeUntil(this.onDestroy)
-      .startWith(this._contentErrors.toArray())
-      .subscribe(x => this.contentErrors.next(x));
+  @Output() changes = new EventEmitter();
+
+  @ContentChildren(RpOptionComponent) options;
+
+  touched = false;
+
+  selected = new Set();
+
+  onChange = (x?: any) => {};
+
+  onTouched = () => {};
+
+  get value() {
+    return Array.from(this.selected.values());
   }
 
-  ngOnDestroy() {
-    this.onDestroy.next();
-  }
-
-  get atLimit() {
-    return this.limit > 0 && this.set.size === this.limit;
-  }
-
-  select(value, event) {
-    event.preventDefault(); // For some reason, this function is called twice without this.
-
-    if (this.set.has(value)) {
-      this.set.delete(value);
-    } else if (!this.atLimit) {
-      this.set.add(value);
+  select(value) {
+    if (this.selected.has(value)) {
+      this.selected.delete(value);
+    } else {
+      if (this.selected.size === 0 || this.selected.size !== this.limit) {
+        this.selected.add(value);
+      }
     }
-    this.onChange(Array.from(this.set));
+
+    this.onChange(this.value);
+    this.changes.emit(this.value);
+
+    this.touched = true;
   }
 
   writeValue(value) {
-    this.set.clear(); // Ensure set is empty on init
-    compact(castArray(value)) // Convert `value` to an array and remove falsy values
-      .forEach(x => this.set.add(x)); // Init set
+    castArray(value)
+      .filter(x => x !== null && x !== undefined)
+      .forEach(x => this.selected.add(x));
   }
 
   registerOnChange(fn) {
@@ -115,6 +80,6 @@ export class RpCheckboxesControlComponent implements ControlValueAccessor, OnIni
   }
 
   registerOnTouched(fn) {
-    this.onTouch = fn;
+    this.onTouched = fn;
   }
 }

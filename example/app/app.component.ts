@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
 import {entries} from 'lodash/fp';
 
@@ -8,15 +8,62 @@ import states from '../assets/states';
   selector: 'app-root',
   styleUrls: ['./app.component.css'],
   templateUrl: './app.html',
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  public hours = this.fb.array([this.fb.group({
+  showErrors = false;
+
+  days = entries([
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ])
+    .map(([value, label]) => ({
+      value: parseInt(value, 10),
+      label,
+    }));
+
+  states = entries(states)
+    .map(([abbr, name]) => ({
+      label: name,
+      value: abbr,
+    }));
+
+  rooms = [
+    {
+      type: 'bathroom',
+      name: 'Bathroom',
+    },
+    {
+      type: 'bedroom',
+      name: 'Bedroom',
+    },
+    {
+      type: 'kitchen',
+      name: 'Kitchen',
+    },
+    {
+      type: 'living',
+      name: 'Living Room',
+    },
+    {
+      type: 'garage',
+      name: 'Garage',
+    },
+  ];
+
+  hours = this.fb.array([this.fb.group({
     days: [[]],
     start: [''],
     end: [''],
   })]);
 
-  public form = this.fb.group({
+  form = this.fb.group({
+    days: [],
     title: ['', Validators.required],
     password: ['', Validators.required],
     email: [''],
@@ -24,17 +71,18 @@ export class AppComponent {
     date: [''],
     time: [''],
     number: [''],
-    textarea: [''],
-    textareaNoRte: [''],
+    textarea: [],
+    textareaNoRte: [],
+    selectObjects: [[this.rooms[0]]],
     singleSelect: [],
     multipleSelect: [[]],
     selectNoOptions: [],
-    toggleControl: [],
+    toggleControl: [true],
     durationControl: [],
     radiosControl: [],
     checkboxesControl: [],
     address: this.fb.group({
-      street: [''],
+      street: ['1234 Main Street'],
       city: [''],
       state: [''],
       zip: [''],
@@ -42,43 +90,6 @@ export class AppComponent {
     links: this.fb.array(['']),
     hours: this.hours,
   });
-
-  public days = [
-    {
-      label: 'Monday',
-      value: 'mon',
-    },
-    {
-      label: 'Tuesday',
-      value: 'tue',
-    },
-    {
-      label: 'Wednesday',
-      value: 'wed',
-    },
-    {
-      label: 'Thursday',
-      value: 'thu',
-    },
-    {
-      label: 'Friday',
-      value: 'fri',
-    },
-    {
-      label: 'Saturday',
-      value: 'sat',
-    },
-    {
-      label: 'Sunday',
-      value: 'sun',
-    },
-  ];
-
-  public states = entries(states)
-    .map(([abbr, name]) => ({
-      label: name,
-      value: abbr,
-    }));
 
   constructor(private fb: FormBuilder) {}
 }

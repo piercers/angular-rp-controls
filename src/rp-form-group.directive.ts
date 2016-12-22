@@ -4,40 +4,38 @@ import {
   Output,
   EventEmitter,
   HostListener,
-  SimpleChanges,
   OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
-import {BoolToggle, BoolToggleI} from './util/rxjs';
-
-@Directive({
-  selector: '[formGroup]',
-})
+@Directive({selector: '[formGroup]'})
 export class RpFormGroupDirective implements OnChanges {
-  @Input('formGroup') form = new FormGroup({});
-  @Input() showErrors: boolean;
+
+  @Input() formGroup = new FormGroup({});
+
+  @Input() showErrors = false;
+
   @Output() rpSubmit = new EventEmitter();
 
-  public isShowingErrors: BoolToggleI = BoolToggle();
+  @Output() submitFail = new EventEmitter();
 
-  ngOnChanges({showErrors}: SimpleChanges) {
-    if (this.showErrors) {
-      this.isShowingErrors.next(showErrors.currentValue);
+  showErrors$ = new BehaviorSubject(false);
+
+  @HostListener('submit') catchSubmit() {
+    if (this.formGroup.invalid) {
+      // TODO Scroll to top
+      this.submitFail.emit(true);
+      this.showErrors$.next(true);
+    } else {
+      this.rpSubmit.emit(this.formGroup.value);
     }
   }
 
-  // get errors() {
-  //   // This could return an object of all errors on form
-  //   // - Could possibly even link to labels
-  // }
-
-  @HostListener('submit', ['$event'])
-  catchSubmit(x) {
-    if (this.form.invalid) {
-      this.isShowingErrors.next(true);
-    } else {
-      this.rpSubmit.emit(this.form.value);
+  ngOnChanges({showErrors}: SimpleChanges) {
+    if (showErrors && showErrors.currentValue === true) {
+      this.catchSubmit(); // Initialize outputs with form status
     }
   }
 }

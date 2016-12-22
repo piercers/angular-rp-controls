@@ -1,80 +1,63 @@
-import {
-  Component,
-  ContentChildren,
-  Input,
-  AfterViewInit,
-  OnDestroy,
-  forwardRef,
-} from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl} from '@angular/forms';
-import {Subject} from 'rxjs/Subject';
-import {ReplaySubject} from 'rxjs/ReplaySubject';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/operator/takeUntil';
+import {Component, Input, Output, EventEmitter, forwardRef, ContentChildren} from '@angular/core';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
-import {RpControlErrorDirective} from './rp-control-error.directive';
-import {RpOptionDirective} from './rp-option.directive';
+import {RpOptionComponent} from './rp-option.component';
 
 @Component({
   selector: 'rp-radios-control',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => RpRadiosControlComponent),
-      multi: true,
-    },
-  ],
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => RpRadiosControlComponent),
+    multi: true,
+  }],
   template: `
-    <fieldset class="rp-controls__fieldset">
-      <legend *ngIf="label" class="rp-controls__legend">{{label}}</legend>
+    <rp-control [value]="selected" [touched]="touched">
+      <fieldset>
+        <legend *ngIf="label">{{label}}</legend>
 
-      <rp-radio-control
-        *ngFor="let option of options"
-        (click)="select(option.value)"
-        [checked]="option.value === value"
-        [label]="option.label"
-        [value]="option.value"
-      ></rp-radio-control>
-    </fieldset>
+        <label *ngFor="let x of options">
+          {{x.label}}
+
+          <input
+            (click)="select(x.value)"
+            [value]="x.value"
+            [checked]="selected === x.value"
+            type="radio"
+          >
+        </label>
+      </fieldset>
+    </rp-control>
   `,
 })
-export class RpRadiosControlComponent implements ControlValueAccessor, AfterViewInit, OnDestroy {
+export class RpRadiosControlComponent implements ControlValueAccessor {
   @Input() label: string;
-  @Input() formControlName: string;
-  @Input() formControl: AbstractControl;
 
-  @ContentChildren(RpOptionDirective) options;
-  @ContentChildren(RpControlErrorDirective) contentErrors;
-
-  private onDestroy = new Subject();
-
-  public _contentErrors = new ReplaySubject(1);
-
-  public value = '';
-
-  public onTouch = () => {};
-
-  public onChange = (x: any) => {};
-
-  ngAfterViewInit() {
-    this.contentErrors.changes
-      .startWith(this.contentErrors)
-      .takeUntil(this.onDestroy)
-      .subscribe(x => this._contentErrors.next(x.toArray()));
-  }
-
-  ngOnDestroy() {
-    this.onDestroy.next();
-  }
-
-  select(value) {
+  @Input() set value(value) {
     this.writeValue(value);
-    this.onChange(value);
-    this.onTouch();
+  };
+
+  @Output() changes = new EventEmitter();
+
+  @ContentChildren(RpOptionComponent) options;
+
+  touched = false;
+
+  selected: any;
+
+  onChange = (x?: any) => {};
+
+  onTouched = () => {};
+
+  select(selected) {
+    this.selected = selected;
+    this.onChange(selected);
+    this.changes.emit(selected);
+    this.touched = true;
+    this.onTouched();
   }
 
   writeValue(value) {
-    this.value = value;
+    this.selected = value;
   }
 
   registerOnChange(fn) {
@@ -82,6 +65,6 @@ export class RpRadiosControlComponent implements ControlValueAccessor, AfterView
   }
 
   registerOnTouched(fn) {
-    this.onTouch = fn;
+    this.onTouched = fn;
   }
 }

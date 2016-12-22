@@ -1,179 +1,47 @@
-import {
-  Component,
-  Input,
-  SimpleChanges,
-  OnChanges,
-  OnInit,
-  AfterViewInit,
-  OnDestroy,
-  ContentChildren,
-  HostBinding,
-  Optional,
-  forwardRef,
-} from '@angular/core';
-import {ControlValueAccessor, AbstractControl, FormGroup, FormControl, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {Subject} from 'rxjs/Subject';
-import {ReplaySubject} from 'rxjs/ReplaySubject';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/operator/takeUntil';
-
-import {RpFormGroupDirective} from './rp-form-group.directive';
-import {RpControlErrorDirective} from './rp-control-error.directive';
-import {RpControlsSettings} from './rp-controls-settings.service';
+import {Component, forwardRef, Input, HostBinding} from '@angular/core';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 @Component({
   selector: 'rp-checkbox-control',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => RpCheckboxControlComponent),
-      multi: true,
-    },
-  ],
-  styles: [`
-    :host {
-      display: block;
-      margin-top: .2rem;
-      font-weight: normal;
-    }
-
-    :host.is-checked {
-      font-weight: bold;
-    }
-
-    :host.is-disabled,
-    :host.is-disabled .checkbox {
-      opacity: .6;
-    }
-
-    .is-hidden {
-      display: none;
-    }
-
-    input {
-      display: none;
-    }
-
-    .checkbox {
-      position: relative;
-      width: 1.33rem;
-      height: 1.33rem;
-      margin-left: .5rem;
-      cursor: pointer;
-      border-radius: 3px;
-    }
-
-    .checkmark {
-      position: absolute;
-      transform: translateY(-50%) rotate(45deg);
-      top: 50%;
-      left: 0;
-      right: 0;
-      text-align: center;
-      font-size: 0rem;
-      opacity: 0;
-      color: white;
-      transition: all .2s ease-out;
-    }
-
-    .checkmark.is-checked {
-      opacity: 1;
-      transform: translateY(-50%) rotate(0deg);
-      font-size: 1rem;
-    }
-  `],
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => RpCheckboxControlComponent),
+    multi: true,
+  }],
   template: `
-    <rp-input-control
-      [control]="control"
-      [label]="label"
-      (id)="id = $event"
-      [inline]="true"
-      (labelClick)="check()"
+    <rp-control
+      [label]="label || value"
+      [touched]="touched"
+      [disabled]="disabled"
     >
       <input
-        [formControl]="control"
-        [id]="id"
+        #rpControlInput
+        (click)="onClick($event.target.checked)"
+        [checked]="checked"
+        [disabled]="disabled"
         type="checkbox"
       >
-
-      <span
-        (click)="check()"
-        [class.is-hidden]="hideCheckbox"
-        [style.background-color]="color"
-        class="checkbox"
-      >
-        <rp-controls-icon
-          name="check"
-          [class.is-checked]="checked"
-          class="checkmark"
-        ></rp-controls-icon>
-      </span>
-    </rp-input-control>
+    </rp-control>
   `,
 })
-export class RpCheckboxControlComponent implements ControlValueAccessor, OnChanges, OnInit, AfterViewInit, OnDestroy {
+export class RpCheckboxControlComponent implements ControlValueAccessor {
   @Input() label: string;
-  @Input() @HostBinding('class.is-disabled') disabled = false;
+
   @Input() @HostBinding('class.is-checked') checked = false;
-  @Input() hideCheckbox = false;
-  @Input() color = this.settings.colors.primary || 'black';
-  @Input() formControlName: string;
-  @Input() formControl: AbstractControl;
 
-  @ContentChildren(RpControlErrorDirective) contentErrors;
+  @Input() disabled = false;
 
-  private onDestroy = new Subject();
+  touched = false;
 
-  public _contentErrors = new ReplaySubject(1);
+  onChange = (x?: any) => {};
 
-  public value = '';
+  onTouched = () => {};
 
-  private form: FormGroup;
-
-  public control: AbstractControl;
-
-  public onTouch = () => {};
-
-  public onChange = (x: any) => {}
-
-  constructor(@Optional() private rpFormGroup: RpFormGroupDirective, private settings: RpControlsSettings) {}
-
-  ngOnChanges({disabled}: SimpleChanges) {
-    if (disabled) this.disable(disabled.currentValue);
-  }
-
-  ngOnInit() {
-    this.form = this.rpFormGroup ? this.rpFormGroup.form : new FormGroup({});
-
-    this.control = this.formControl || this.form.get(this.formControlName) || new FormControl();
-
-    this.disable(this.disabled);
-  }
-
-  ngAfterViewInit() {
-    this.contentErrors.changes
-      .startWith(this.contentErrors)
-      .takeUntil(this.onDestroy)
-      .subscribe(x => this._contentErrors.next(x.toArray()));
-  }
-
-  ngOnDestroy() {
-    this.onDestroy.next();
-  }
-
-  disable(isDisabled) {
-    if (this.control) {
-      if (isDisabled === false) this.control.enable();
-      if (isDisabled === true) this.control.disable();
-    }
-  }
-
-  check() {
-    if (!this.disabled) {
-      this.checked = !this.checked;
-      this.onChange(this.checked);
-    }
+  onClick(isChecked) {
+    this.onChange(isChecked);
+    this.checked = isChecked;
+    this.touched = true;
+    this.onTouched();
   }
 
   writeValue(value) {
@@ -185,6 +53,6 @@ export class RpCheckboxControlComponent implements ControlValueAccessor, OnChang
   }
 
   registerOnTouched(fn) {
-    this.onTouch = fn;
+    this.onTouched = fn;
   }
 }
