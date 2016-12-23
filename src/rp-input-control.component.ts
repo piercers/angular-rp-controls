@@ -29,12 +29,39 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl} from '@angular/for
   `,
 })
 export class RpInputControlComponent implements ControlValueAccessor {
+  /**
+   * Type of input (text, date, password, email, etc)
+   */
   @Input() type = 'text';
+
+  /**
+   * Control label string
+   */
   @Input() label: string;
+
+  /**
+   * Placeholder text for input field
+   */
   @Input() placeholder = '';
+
+  /**
+   * Optional way to associate with a FormControl
+   */
   @Input() formControl = new FormControl();
+
+  /**
+   * Optional way to associate with a FormControl
+   */
   @Input() formControlName: string;
+
+  /**
+   * Field-level error messages
+   */
   @Input() errors = {};
+
+  /**
+   * Output control value as it changes
+   */
   @Output() changes = new EventEmitter();
 
   hasFocus = false;
@@ -47,12 +74,18 @@ export class RpInputControlComponent implements ControlValueAccessor {
 
   onTouched = () => {};
 
+  /**
+   * Mark as touched on <input> blur
+   */
   touch() {
     this.hasFocus = false;
     this.touched = true;
     this.onTouched();
   }
 
+  /**
+   * Report changes on input
+   */
   onInput(value) {
     this.value = value;
     this.onChange(value);

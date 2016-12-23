@@ -15,6 +15,7 @@ const getSelectedLabels = (options = [], selected = '') => castArray(selected)
 // TODO Add <rp-control-errors> to menu?
 // - Might be able to grab control off view's <rp-control>
 //  #rpControl.control
+// TODO Might be clearer and more consistent to always call the control value "value" instead of "selected"
 @Component({
   selector: 'rp-select-control',
   providers: [{
@@ -69,12 +70,24 @@ const getSelectedLabels = (options = [], selected = '') => castArray(selected)
   `,
 })
 export class RpSelectControlComponent implements ControlValueAccessor {
+  /**
+   * Field Label
+   */
   @Input() label: string;
 
+  /**
+   * Limit on number of selections (Zero is infinite)
+   */
   @Input() limit = 1;
 
+  /**
+   * Text to show when nothing is selected
+   */
   @Input() placeholder = 'Select...';
 
+  /**
+   * Whenever input changes, update control
+   */
   @Input() set value(value) {
     this.writeValue(value);
   }
@@ -93,6 +106,9 @@ export class RpSelectControlComponent implements ControlValueAccessor {
 
   constructor(private settings: RpControlsSettingsService) {}
 
+  /**
+   * Comma-separated list of selected value labels
+   */
   get names() {
     return getSelectedLabels(this.options.toArray(), this.selected);
   }
@@ -102,6 +118,9 @@ export class RpSelectControlComponent implements ControlValueAccessor {
     this.onChange(this.selected);
   }
 
+  /**
+   * Toggle whether dropdown is open
+   */
   open() {
     this.isOpen = !this.isOpen;
 

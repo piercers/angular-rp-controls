@@ -1,6 +1,6 @@
 import {Component, forwardRef, Output, EventEmitter, Input, ViewChild, AfterViewInit, OnDestroy} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import SimpleMDE from 'simplemde';
+import * as SimpleMDE from 'simplemde'; // TODO Test
 
 @Component({
   selector: 'rp-textarea-control',
@@ -27,12 +27,25 @@ import SimpleMDE from 'simplemde';
   `,
 })
 export class RpTextareaControlComponent implements ControlValueAccessor, AfterViewInit, OnDestroy {
+  /**
+   * Field label
+   */
   @Input() label: string;
 
+  /**
+   * Text to show if control has no value
+   */
   @Input() placeholder = '';
 
+  /**
+   * Whether or not to render SimpleMDE rich-text editor
+   */
   @Input() rte = true;
 
+  /**
+   * Output changes as editor value changes
+   * TODO Rename to "changes"?
+   */
   @Output() change = new EventEmitter();
 
   @ViewChild('rpControlInput') textarea;
@@ -50,7 +63,7 @@ export class RpTextareaControlComponent implements ControlValueAccessor, AfterVi
   onTouched = () => {};
 
   ngAfterViewInit() {
-    if (this.rte) {
+    if (this.rte) { // Only instantiate SimpleMDE if rich-text editor input is true
       this.editor = new SimpleMDE({
         element: this.textarea.nativeElement,
       });
@@ -68,6 +81,9 @@ export class RpTextareaControlComponent implements ControlValueAccessor, AfterVi
     }
   }
 
+  /**
+   * Report changes on input of textarea or SimpleMDE
+   */
   onInput(value) {
     this.value = value;
     this.onChange(value);

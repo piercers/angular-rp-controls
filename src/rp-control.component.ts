@@ -96,7 +96,7 @@ export class RpControlComponent implements OnInit, AfterContentInit {
 
   control: FormControl;
 
-  showErrors$: BehaviorSubject<boolean> = this.rpFormGroup.showErrors$;
+  showErrors$: BehaviorSubject<boolean>;
 
   constructor(
     private renderer: Renderer,
@@ -110,6 +110,13 @@ export class RpControlComponent implements OnInit, AfterContentInit {
 
   ngOnInit() {
     this.control = this.formControlName ? this.formControlName.control : this.formControl || new FormControl();
+
+    // TODO This was added without much testing.
+    // - Does this still work with parent FormGroup?
+    // - Would errors show up with just a FormControl?
+    if (this.rpFormGroup) {
+      this.showErrors$ = this.rpFormGroup.showErrors$;
+    }
   }
 
   ngAfterContentInit() {
