@@ -12,7 +12,7 @@ import {
   SkipSelf,
 } from '@angular/core';
 import {FormControl, FormControlName} from '@angular/forms';
-import {uniqueId} from 'lodash';
+import {castArray, compact, concat, defaultTo, flatten, flow, forEach, isEmpty, map, uniqueId} from 'lodash/fp';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
 import 'rxjs/add/operator/map';
@@ -78,6 +78,8 @@ import {RpFormGroupDirective} from './rp-form-group.directive';
 export class RpControlComponent implements OnInit, AfterContentInit {
   @Input() label: string;
 
+  @Input() types = [];
+
   // TODO Might need to check for empty ({}, null) values
   // - Could be done with getter / setter?
   @Input() @HostBinding('class.has-value') value: any;
@@ -130,25 +132,18 @@ export class RpControlComponent implements OnInit, AfterContentInit {
 
       // Add class to input
       this.renderer.setElementClass(this.input.nativeElement, 'rp-control__input', true);
+    }
 
-      // Add classes to hosti
-      this.renderer.setElementClass(this.el.nativeElement, `rp-control--${type}`, true);
-
-      if (this.settings.theme) {
-        this.renderer.setElementClass(this.el.nativeElement, `rp-control--${this.settings.theme}`, true);
-      }
-
-      switch (type) {
-        case 'text':
-        case 'date':
-          this.renderer.setElementClass(this.el.nativeElement, 'rp-control--text', true);
-          break;
-
-        case 'select-one':
-        case 'select-multiple':
-          this.renderer.setElementClass(this.el.nativeElement, 'rp-control--select', true);
-          break;
-      }
+    // Add classes to host
+    if (!isEmpty(this.settings.themes)) {
+      flow(
+        defaultTo([]),
+        concat(castArray(this.types)),
+        flatten,
+        compact,
+        map(x => `rp-control--${x}`),
+        forEach((x) => this.renderer.setElementClass(this.el.nativeElement, x, true))
+      )(this.settings.themes);
     }
   }
 }

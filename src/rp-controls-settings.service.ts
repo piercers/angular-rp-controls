@@ -5,14 +5,13 @@ export class RpControlsConfig {}
 
 @Injectable()
 export class RpControlsSettingsService {
+  themes = ['default', 'app'];
+
   colors = {
     primary: '#666',
     error: 'red',
     accent: '', // TODO Implement
   };
-
-  // TODO Maybe it's best not to have a default theme?
-  theme = 'default'; // TODO Add 'app'
 
   errors = {
     required: 'required',

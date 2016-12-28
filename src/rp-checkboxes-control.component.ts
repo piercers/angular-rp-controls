@@ -12,7 +12,7 @@ import {RpOptionComponent} from './rp-option.component';
     multi: true,
   }],
   template: `
-    <rp-control [value]="value" [touched]="touched">
+    <rp-control [value]="value" [touched]="touched" types="checkboxes">
       <fieldset>
         <legend *ngIf="label">{{label}}</legend>
 

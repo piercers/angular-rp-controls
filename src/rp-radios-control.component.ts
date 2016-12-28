@@ -11,7 +11,7 @@ import {RpOptionComponent} from './rp-option.component';
     multi: true,
   }],
   template: `
-    <rp-control [value]="selected" [touched]="touched">
+    <rp-control [value]="selected" [touched]="touched" types="radios">
       <fieldset>
         <legend *ngIf="label">{{label}}</legend>
 

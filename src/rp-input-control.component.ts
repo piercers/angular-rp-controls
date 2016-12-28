@@ -15,6 +15,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl} from '@angular/for
       [hasFocus]="hasFocus"
       [touched]="touched"
       [errors]="errors"
+      [types]="['text', type]"
     >
       <input
         #rpControlInput
@@ -32,7 +33,7 @@ export class RpInputControlComponent implements ControlValueAccessor {
   /**
    * Type of input (text, date, password, email, etc)
    */
-  @Input() type = 'text';
+  @Input() type: string;
 
   /**
    * Control label string

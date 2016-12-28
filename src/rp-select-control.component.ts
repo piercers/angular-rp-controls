@@ -52,6 +52,7 @@ const getSelectedLabels = (options = [], selected = '') => castArray(selected)
       [hasFocus]="isOpen"
       [touched]="touched"
       [label]="label"
+      types="select"
     >
       <button (click)="open()" type="button">{{names || placeholder}} ▾</button>
 

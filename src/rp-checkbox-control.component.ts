@@ -13,6 +13,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
       [label]="label || value"
       [touched]="touched"
       [disabled]="disabled"
+      types="checkbox"
     >
       <input
         #rpControlInput
