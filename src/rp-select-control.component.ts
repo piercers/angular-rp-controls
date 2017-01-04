@@ -24,14 +24,6 @@ const getSelectedLabels = (options = [], selected = '') => castArray(selected)
     multi: true,
   }],
   styles: [`
-    /*
-      TODO RpSelectControlComponent needs its own styles since its default display won't look like a select
-      - Keep it *very* minimal
-      - Enhance styles on .rp-controls--default
-      - Leave radios/checkboxes in
-        - That's for default/author styling
-    */
-
     :host {
       position: relative;
     }

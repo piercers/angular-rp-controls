@@ -265,13 +265,13 @@ import {RpFormGroupDirective} from './rp-form-group.directive';
     }
 
     /* Dropdown */
-    .rp-control--default .dropdown {
+    .rp-control--default.rp-control--select .dropdown {
       position: absolute;
       top: -0.35rem;
       left: -0.3rem;
       box-shadow: 0 0 7px rgba(0, 0, 0, .3);
     }
-    .rp-control--default .dropdown .rp-control__radio input {
+    .rp-control--default.rp-control--select .dropdown .rp-control__radio input {
       display: none;
     }
 
