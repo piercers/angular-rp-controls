@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy} from '@angular/core';
+import {Component, ChangeDetectionStrategy, ViewEncapsulation} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
 import {entries} from 'lodash/fp';
 
@@ -7,8 +7,17 @@ import states from '../assets/states';
 @Component({
   selector: 'app-root',
   styleUrls: ['./app.component.css'],
+  styles: [`
+    /**
+     * App Theme
+     */
+    .rp-control--app {
+      font-family: sans-serif;
+    }
+  `],
   templateUrl: './app.html',
   // changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent {
   showErrors = false;

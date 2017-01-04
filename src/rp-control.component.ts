@@ -45,7 +45,6 @@ import {RpControlsSettingsService} from './rp-controls-settings.service';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 
 // TODO Scope ::placeholder selectors to be children of rp-control
-// TODO Fade label in <rp-select-control> if wider than button so caret doesn't wrap
 // TODO Should '.is-disabled' be part of this?
 // - Probably - all fields can be disabled
 @Component({
@@ -67,22 +66,22 @@ import {RpFormGroupDirective} from './rp-form-group.directive';
     }
 
     /* Placeholders */
-    ::placeholder {
+    .rp-control--default ::placeholder {
       color: #d6d6d6;
     }
-    ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    .rp-control--default ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
       color: #d6d6d6;
     }
-    :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    .rp-control--default :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
       color: #d6d6d6;
     }
-    ::-moz-placeholder { /* Mozilla Firefox 19+ */
+    .rp-control--default ::-moz-placeholder { /* Mozilla Firefox 19+ */
       color: #d6d6d6;
     }
-    :-ms-input-placeholder { /* Internet Explorer 10-11 */
+    .rp-control--default :-ms-input-placeholder { /* Internet Explorer 10-11 */
       color: #d6d6d6;
     }
-    ::-webkit-datetime-edit-fields-wrapper {
+    .rp-control--default ::-webkit-datetime-edit-fields-wrapper {
       color: #d6d6d6;
     }
 
@@ -328,14 +327,6 @@ import {RpFormGroupDirective} from './rp-form-group.directive';
       padding: 0;
       list-style-type: none;
     }
-
-    /**
-     * App Theme
-     */
-    .rp-control--app {
-      font-family: sans-serif;
-    }
-
   `],
   template: `
     <label
