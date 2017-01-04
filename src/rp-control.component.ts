@@ -10,15 +10,35 @@ import {
   OnInit,
   AfterContentInit,
   SkipSelf,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges,
+  ChangeDetectorRef,
 } from '@angular/core';
 import {FormControl, FormControlName} from '@angular/forms';
-import {castArray, compact, concat, defaultTo, flatten, flow, forEach, isEmpty, map, uniqueId} from 'lodash/fp';
+import {castArray, compact, concat, defaultTo, flatten, flow, forEach, isEmpty, isNumber, map, uniqueId, size} from 'lodash/fp';
+import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
+import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/startWith';
 
 import {RpControlsSettingsService} from './rp-controls-settings.service';
 import {RpFormGroupDirective} from './rp-form-group.directive';
+
+// TODO These should work through RpControlsSettingsService somehow
+const gray = '#d6d6d6';
+const grayDark = '#666';
+const paddingBase = '.33rem';
+const borderRadius = '3px';
+const placeholder = gray;
+const text = grayDark;
+const faded = 'rgba(0, 0, 0, 0.05)';
+const primary = '#F28525';
+const error = 'red';
+const labelHeight = '1.2rem';
 
 // TODO Should '.is-disabled' be part of this?
 // - Probably - all fields can be disabled
@@ -26,63 +46,304 @@ import {RpFormGroupDirective} from './rp-form-group.directive';
   selector: 'rp-control',
   styles: [`
     /* Bare minimum / Reset */
+    html {
+      box-sizing: border-box;
+    }
+
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+
     fieldset {
+      margin: 0;
       padding: 0;
       border: 0;
     }
 
-    /* Placecholders */
+    /* Placeholders */
     ::placeholder {
-      color: rgba(0, 0, 0, 0.4);
+      color: ${placeholder};
     }
     ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-      color: rgba(0, 0, 0, 0.4);
+      color: ${placeholder};
     }
     :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-      color: rgba(0, 0, 0, 0.4);
+      color: ${placeholder};
     }
     ::-moz-placeholder { /* Mozilla Firefox 19+ */
-      color: rgba(0, 0, 0, 0.4);
+      color: ${placeholder};
     }
     :-ms-input-placeholder { /* Internet Explorer 10-11 */
-      color: rgba(0, 0, 0, 0.4);
+      color: ${placeholder};
     }
     ::-webkit-datetime-edit-fields-wrapper {
-      color: rgba(0, 0, 0, 0.4);
+      color: ${placeholder};
     }
 
+    /* Dropdown */
     .dropdown label { /* Here for viewEncapsulation: 'none' */
       display: block;
       white-space: nowrap;
     }
-
     .dropdown rp-checkbox-control {
-      display: inline-block;
+      display: block;
+    }
+
+  	/**
+  	 * Default Theme
+  	 */
+    rp-control.rp-control--default {
+      position: relative;
+      display: block;
+    }
+    rp-control.rp-control--default:not(.is-nested) {
+      padding-top: .33rem;
+      padding-bottom: .33rem;
+    }
+
+    .rp-control--default .rp-control__input-container {
+      position: relative;
+    }
+    .rp-control--default:not(.is-inline):not(.is-nested) > .rp-control__input-container::after {
+      content: '';
+      display: block;
+      position: absolute;
+      bottom: .2rem;
+      right: ${paddingBase};
+      left: ${paddingBase};
+      height: 1px;
+      background-color: ${placeholder};
+      transition: all .2s ease-out;
+    }
+    .rp-control--default.has-focus:not(.is-inline):not(.is-nested) > .rp-control__input-container::after {
+      height: 2px;
+      background-color: ${primary};
+    }
+
+  	.rp-control--default .rp-control__input,
+  	.rp-control--default .rp-control__select-btn {
+      font-size: 1rem;
+      font-family: inherit;
+      margin: 0 0 .2rem;
+      padding: ${paddingBase};
+      border: 0;
+      border-radius: ${borderRadius};
+      background: transparent;
+      outline: none;
+  	}
+
+  	/* Placeholders */
+    .rp-control--default .rp-control__placeholder {
+      opacity: 0;
+    }
+    ::placeholder {
+      opacity: 0;
+    }
+    ::-webkit-input-placeholder {
+      opacity: 0;
+    }
+    :-moz-placeholder {
+      opacity: 0;
+    }
+    ::-moz-placeholder {
+      opacity: 0;
+    }
+    :-ms-input-placeholder {
+      opacity: 0;
+    }
+    .rp-control--default:not(.has-focus):not(.has-value) ::-webkit-datetime-edit-fields-wrapper { /* This class also handles value dislplay so change accordingly */
+      opacity: 0;
+    }
+    .rp-control--default.has-value ::-webkit-datetime-edit-fields-wrapper {
+      color: ${text};
+    }
+    .rp-control--default.has-focus .rp-control__placeholder {
+      opacity: 1;
+    }
+    .has-focus ::placeholder {
+      opacity: 1;
+    }
+    .has-focus ::-webkit-input-placeholder {
+      opacity: 1;
+    }
+    .has-focus :-moz-placeholder {
+      opacity: 1;
+    }
+    .has-focus ::-moz-placeholder {
+      opacity: 1;
+    }
+    .has-focus :-ms-input-placeholder {
+      opacity: 1;
+    }
+    .has-focus ::-webkit-datetime-edit-fields-wrapper {
+      opacity: 1;
+    }
+
+    /* Labels */
+    .rp-control--default:not(.is-nested) > .rp-control__label,
+    .rp-control--default:not(.is-nested) legend {
+      display: block;
+      position: relative;
+      top: 0;
+      left: ${paddingBase};
+      height: ${labelHeight};
+      transition: all .2s ease-out;
+      cursor: pointer;
+    }
+    .rp-control--default:not(.is-nested) > .rp-control__label,
+    .rp-control--default:not(.is-nested) legend {
+      font-size: .8em;
+    }
+    .rp-control--default:not(.has-value):not(.has-focus):not(.is-inline) > .rp-control__label {
+      top: 1.6rem;
+      left: .4rem;
+      font-size: 1em;
+    }
+    .rp-control--default.has-focus:not(.is-inline) > .rp-control__label {
+      color: ${primary};
+    }
+    .rp-control--default.has-errors.was-touched > .rp-control__label {
+      color: ${error};
+    }
+
+    /* Text Inputs */
+    .rp-control--text.rp-control--default .rp-control__input,
+    .rp-control--textarea.rp-control--default .rp-control__input {
+      width: 100%;
+    }
+
+  	/* Textarea */
+    .rp-control--default .CodeMirror-placeholder {
+      color: ${placeholder};
+      opacity: 1;
+    }
+    .rp-control--default .CodeMirror,
+    .rp-control--default .editor-toolbar {
+      border-color: ${placeholder};
+      opacity: 1;
+    }
+    .rp-control--default .editor-toolbar a {
+    	color: ${text} !important; /* Override SimpleMDE styles */
+    }
+    .rp-control--default .editor-statusbar {
+      color: ${placeholder};
+    }
+
+    /* Select */
+    .rp-control--default .rp-control__select-btn {
+      width: 100%;
+      text-align: left;
+    }
+    .rp-control--default .rp-control__select-btn-icon {
+      float: right;
+      transform: rotate(0deg);
+      transition: .2s all ease-out;
+    }
+    .rp-control--default.has-focus .rp-control__select-btn-icon {
+      transform: rotate(180deg);
+    }
+    .rp-control--select:not(.has-value) > .rp-control__label { /* Open dropdown by clicking on label */
+      pointer-events: none;
+    }
+
+  	/* Dropdown */
+    .rp-control--default .dropdown {
+      position: absolute;
+      top: -0.35rem;
+      left: -0.3rem;
+      box-shadow: 0 0 7px rgba(0, 0, 0, .3);
+    }
+    .rp-control--default .dropdown .rp-control__radio input {
+      display: none;
+    }
+
+    /* List Items */
+    .rp-control--default .rp-control__list-item {
+      display: block;
+      padding: .66rem;
+      border-bottom: 1px solid ${placeholder};
+    }
+    .rp-control--default .rp-control__list-item.is-checked {
+      background-color: ${faded};
+    }
+    .rp-control--default .rp-control__list-item:last-child {
+      border-bottom: 0;
+    }
+    .rp-control--default .rp-control__list-item .rp-control__input-container {
+      float: right;
+      padding-left: calc(${paddingBase} * 2);
+    }
+
+  	/* Radios */
+    .rp-control--default .rp-control__radio label {
+      display: block;
+      width: 100%;
+    }
+    .rp-control--default .rp-control__radio input {
+      float: right;
+      margin: 0;
+    }
+
+  	/* Checkboxes */
+    .rp-control--checkbox.rp-control--default {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    /* Errors */
+    .rp-control--default rp-control-errors {
+      display: block;
+      flex-basis: 100%;
+      height: 1rem;
+      padding-left: ${paddingBase};
+      padding-right: ${paddingBase};
+      font-size: .8em;
+    }
+    .rp-control--default.was-touched rp-control-errors {
+      color: ${error};
+    }
+    .rp-control--default rp-control-errors ul {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+    }
+
+    /**
+     * App Theme
+     */
+    .rp-control--app {
+      font-family: sans-serif;
     }
   `],
   template: `
-    <label *ngIf="label" [attr.for]="id|async" class="rp-control__label">{{label}}</label>
+    <label
+      *ngIf="label"
+      (click)="labelClick.emit()"
+      [attr.for]="id|async"
+      class="rp-control__label"
+    >{{label}}</label>
 
     <div class="rp-control__input-container">
       <ng-content></ng-content>
     </div>
 
     <rp-control-errors
-      *ngIf="!rpControl && (touched || (showErrors$|async))"
-      [errors]="control?.errors"
+      *ngIf="!rpControl"
+      [class.is-shown]="touched || (showErrors$|async)"
+      [errors]="controlErrors|async"
       [messages]="errors"
     ></rp-control-errors>
   `,
   encapsulation: ViewEncapsulation.None,
 })
-export class RpControlComponent implements OnInit, AfterContentInit {
+export class RpControlComponent implements OnChanges, OnInit, AfterContentInit {
   @Input() label: string;
 
   @Input() types = [];
 
-  // TODO Might need to check for empty ({}, null) values
-  // - Could be done with getter / setter?
-  @Input() @HostBinding('class.has-value') value: any;
+  @Input() value: any;
 
   @Input() @HostBinding('class.has-focus') hasFocus: boolean;
 
@@ -90,28 +351,50 @@ export class RpControlComponent implements OnInit, AfterContentInit {
 
   @Input() @HostBinding('class.is-disabled') disabled = false;
 
-  @Input() errors = {};
+  @Input() @HostBinding('class.is-inline') inline = false;
+
+  @Input() errors = {}; // Error messages
+
+  @Output() labelClick = new EventEmitter();
 
   @ContentChild('rpControlInput') input;
 
+  @HostBinding('class.has-value') hasValue = false;
+
+  @HostBinding('class.has-errors') hasErrors = false;
+
   id = new ReplaySubject(1);
 
-  control: FormControl;
+  private control: FormControl;
 
   showErrors$: BehaviorSubject<boolean>;
+
+  controlErrors: Observable<any>;
 
   constructor(
     private renderer: Renderer,
     private settings: RpControlsSettingsService,
     private el: ElementRef,
+    private changeDetectorRef: ChangeDetectorRef,
     @Optional() private formControl: FormControl,
     @Optional() private formControlName: FormControlName,
     @Optional() private rpFormGroup: RpFormGroupDirective,
     @Optional() @SkipSelf() private rpControl: RpControlComponent // Exists if <rp-control> is nested under another <rp-control>
   ) {}
 
+  ngOnChanges({value}: SimpleChanges) {
+    if (value) {
+      this.hasValue = isNumber(value.currentValue) || !isEmpty(value.currentValue);
+    }
+  }
+
   ngOnInit() {
     this.control = this.formControlName ? this.formControlName.control : this.formControl || new FormControl();
+
+    this.controlErrors = this.control.valueChanges
+      .startWith({})
+      .map(() => this.control.errors || {})
+      .do(x => this.hasErrors = !isEmpty(x)); // Update `hasErrors` binding
 
     // TODO This was added without much testing.
     // - Does this still work with parent FormGroup?
@@ -119,6 +402,12 @@ export class RpControlComponent implements OnInit, AfterContentInit {
     if (this.rpFormGroup) {
       this.showErrors$ = this.rpFormGroup.showErrors$;
     }
+
+    if (this.rpControl) { // Add class if control is nested within another control
+      this.renderer.setElementClass(this.el.nativeElement, 'is-nested', true);
+    }
+
+    this.changeDetectorRef.detectChanges(); // Since controlErrors gets a value here
   }
 
   ngAfterContentInit() {

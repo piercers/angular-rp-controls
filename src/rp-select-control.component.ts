@@ -1,6 +1,6 @@
 import {Component, Input, forwardRef, ContentChildren} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {castArray} from 'lodash';
+import {castArray} from 'lodash/fp';
 
 import {RpControlsSettingsService} from './rp-controls-settings.service';
 import {RpOptionComponent} from './rp-option.component';
@@ -45,16 +45,21 @@ const getSelectedLabels = (options = [], selected = '') => castArray(selected)
     }
   `],
   template: `
-    <rp-controls-overlay [open]="isOpen" (click)="open()" [opacity]="settings.dropdown.opacity"></rp-controls-overlay>
+    <rp-controls-overlay [open]="isOpen" (click)="open()" [opacity]="dropdown.opacity"></rp-controls-overlay>
 
     <rp-control
       [value]="selected"
       [hasFocus]="isOpen"
       [touched]="touched"
       [label]="label"
+      (labelClick)="open()"
       types="select"
     >
-      <button (click)="open()" type="button">{{names || placeholder}} ▾</button>
+      <button (click)="open()" class="rp-control__select-btn" type="button">
+        <span *ngIf="names.length">{{names}}</span>
+        <span *ngIf="!names.length" class="rp-control__placeholder">{{placeholder}}</span>
+        <span class="rp-control__select-btn-icon">▾</span>
+      </button>
 
       <div *ngIf="isOpen" class="dropdown">
         <!-- Single Select -->
@@ -66,6 +71,11 @@ const getSelectedLabels = (options = [], selected = '') => castArray(selected)
         <rp-checkboxes-control *ngIf="limit !== 1" [value]="selected" (changes)="select($event)" [limit]="limit">
           <rp-option *ngFor="let x of options" [value]="x.value" [label]="x.label"></rp-option>
         </rp-checkboxes-control>
+
+        <!-- No options -->
+        <fieldset *ngIf="!options.length">
+          <div class="rp-control__list-item">No options.</div>
+        </fieldset>
       </div>
     </rp-control>
   `,
@@ -100,6 +110,8 @@ export class RpSelectControlComponent implements ControlValueAccessor {
   isOpen = false;
 
   touched = false;
+
+  dropdown = this.settings.dropdown;
 
   onChange = (x?: any) => {};
 

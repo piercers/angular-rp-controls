@@ -11,20 +11,27 @@ import {RpOptionComponent} from './rp-option.component';
     multi: true,
   }],
   template: `
-    <rp-control [value]="selected" [touched]="touched" types="radios">
+    <rp-control [value]="selected" [touched]="touched" [inline]="true" types="radios">
       <fieldset>
         <legend *ngIf="label">{{label}}</legend>
 
-        <label *ngFor="let x of options">
-          {{x.label}}
+        <div
+          *ngFor="let x of options"
+          (click)="select(x.value)"
+          [class.is-checked]="selected === x.value"
+          class="rp-control__list-item rp-control__radio"
+        >
+          <label>
+            {{x.label}}
 
-          <input
-            (click)="select(x.value)"
-            [value]="x.value"
-            [checked]="selected === x.value"
-            type="radio"
-          >
-        </label>
+            <input
+              (click)="select(x.value)"
+              [value]="x.value"
+              [checked]="selected === x.value"
+              type="radio"
+            >
+          </label>
+        </div>
       </fieldset>
     </rp-control>
   `,

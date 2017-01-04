@@ -33,7 +33,7 @@ export class RpInputControlComponent implements ControlValueAccessor {
   /**
    * Type of input (text, date, password, email, etc)
    */
-  @Input() type: string;
+  @Input() type = 'text';
 
   /**
    * Control label string

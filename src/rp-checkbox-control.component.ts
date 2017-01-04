@@ -1,4 +1,4 @@
-import {Component, forwardRef, Input, HostBinding} from '@angular/core';
+import {Component, forwardRef, Input, HostBinding, Output, EventEmitter, HostListener} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 @Component({
@@ -10,14 +10,15 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
   }],
   template: `
     <rp-control
-      [label]="label || value"
+      [label]="label"
       [touched]="touched"
       [disabled]="disabled"
+      [inline]="true"
+      (labelClick)="onClick()"
       types="checkbox"
     >
       <input
         #rpControlInput
-        (click)="onClick($event.target.checked)"
         [checked]="checked"
         [disabled]="disabled"
         type="checkbox"
@@ -32,17 +33,21 @@ export class RpCheckboxControlComponent implements ControlValueAccessor {
 
   @Input() disabled = false;
 
+  @Output() check = new EventEmitter();
+
   touched = false;
 
   onChange = (x?: any) => {};
 
   onTouched = () => {};
 
-  onClick(isChecked) {
+  @HostListener('click') onClick() {
+    const isChecked = !this.checked;
     this.onChange(isChecked);
     this.checked = isChecked;
     this.touched = true;
     this.onTouched();
+    this.check.emit(isChecked);
   }
 
   writeValue(value) {

@@ -15,6 +15,7 @@ import * as SimpleMDE from 'simplemde'; // TODO Test
       [label]="label"
       [hasFocus]="hasFocus"
       [touched]="touched"
+      [inline]="rte"
       types="textarea"
     >
       <textarea

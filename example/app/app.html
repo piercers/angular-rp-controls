@@ -9,11 +9,11 @@
     <rp-option *ngFor="let x of rooms" [label]="x.name" [value]="x"></rp-option>
   </rp-select-control>
 
-  <rp-input-control label="Title" formControlName="title" [errors]="{required: 'A title is required'}"></rp-input-control>
+  <rp-input-control label="Title" formControlName="title" [errors]="{required: 'A title is required'}" placeholder="An Example Title"></rp-input-control>
 
   <rp-input-control label="Password" formControlName="password" type="password"></rp-input-control>
 
-  <rp-input-control label="Email" formControlName="email" type="email"></rp-input-control>
+  <rp-input-control label="Email" formControlName="email" type="email" placeholder="test@test.com"></rp-input-control>
 
   <rp-input-control label="Phone" formControlName="phone" type="tel"></rp-input-control>
 
@@ -23,15 +23,15 @@
 
   <rp-input-control label="Number" formControlName="number" type="number"></rp-input-control>
 
-  <rp-textarea-control label="Textarea" formControlName="textarea"></rp-textarea-control>
+  <rp-textarea-control label="Textarea" formControlName="textarea" placeholder="Some rich text placeheld"></rp-textarea-control>
 
-  <rp-textarea-control label="Textarea (No Rich Text Editor)" formControlName="textareaNoRte" [rte]="false"></rp-textarea-control>
+  <rp-textarea-control label="Textarea (No Rich Text Editor)" formControlName="textareaNoRte" [rte]="false" placeholder="This is where you would type stuff."></rp-textarea-control>
 
   <rp-select-control label="Single Select" formControlName="singleSelect">
     <rp-option *ngFor="let option of [1, 2, 3, 4, 5]" label="Option {{option}}" [value]="option"></rp-option>
   </rp-select-control>
 
-  <rp-select-control label="Multiple Select (Limit: 3)" formControlName="multipleSelect" [limit]="3">
+  <rp-select-control label="Multiple Select (Limit: 3)" formControlName="multipleSelect" [limit]="3" placeholder="Choose up to 3...">
     <rp-option *ngFor="let option of [1, 2, 3, 4, 5]" label="Option {{option}}" [value]="option"></rp-option>
   </rp-select-control>
 
@@ -53,13 +53,13 @@
 
     <rp-input-control label="Street" formControlName="street"></rp-input-control>
 
-    <rp-input-control label="City" formControlName="city"></rp-input-control>
+    <rp-input-control label="City" formControlName="city" placeholder="Malibu"></rp-input-control>
 
     <rp-select-control label="State" formControlName="state">
       <rp-option *ngFor="let state of states" [label]="state.label" [value]="state.value"></rp-option>
     </rp-select-control>
 
-    <rp-input-control label="Zip" formControlName="zip"></rp-input-control>
+    <rp-input-control label="Zip" formControlName="zip" placeholder="90210"></rp-input-control>
   </section>
 
   <section formArrayName="links">
@@ -68,7 +68,7 @@
     <button rpFormArrayAdd type="button">Add Link</button>
 
     <div *ngFor="let c of form.get('links').controls; let i = index">
-      <rp-input-control label="href" [formControl]="c"></rp-input-control>
+      <rp-input-control label="href" [formControl]="c" placeholder="facebook.com"></rp-input-control>
 
       <button (click)="form.get('links').removeAt(i)" type="button">Remove Link</button>
     </div>
@@ -82,7 +82,7 @@
         <rp-option *ngFor="let day of days" [label]="day.label" [value]="day.value"></rp-option>
       </rp-select-control>
 
-      <rp-input-control label="Start" formControlName="start" type="time"></rp-input-control>
+      <rp-input-control label="Start" formControlName="start" type="time" placeholder="12:34 PM"></rp-input-control>
 
       <rp-input-control label="End" formControlName="end" type="time"></rp-input-control>
 

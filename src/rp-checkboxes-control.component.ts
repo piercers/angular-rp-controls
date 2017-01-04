@@ -1,6 +1,6 @@
 import {Component, Input, Output, EventEmitter, forwardRef, ContentChildren} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {castArray} from 'lodash';
+import {castArray} from 'lodash/fp';
 
 import {RpOptionComponent} from './rp-option.component';
 
@@ -12,19 +12,18 @@ import {RpOptionComponent} from './rp-option.component';
     multi: true,
   }],
   template: `
-    <rp-control [value]="value" [touched]="touched" types="checkboxes">
+    <rp-control [value]="value" [touched]="touched" [inline]="true" types="checkboxes">
       <fieldset>
         <legend *ngIf="label">{{label}}</legend>
 
-        <label *ngFor="let x of options">
-          {{x.label}}
-
-          <rp-checkbox-control
-            (click)="select(x.value)"
-            [checked]="selected.has(x.value)"
-            [disabled]="limit !== 0 && selected.size === limit && !selected.has(x.value)"
-          ></rp-checkbox-control>
-        </label>
+        <rp-checkbox-control
+          *ngFor="let x of options"
+          (check)="select(x.value)"
+          [label]="x.label"
+          [checked]="selected.has(x.value)"
+          [disabled]="limit !== 0 && selected.size === limit && !selected.has(x.value)"
+          class="rp-control__list-item"
+        ></rp-checkbox-control>
       </fieldset>
     </rp-control>
   `,
