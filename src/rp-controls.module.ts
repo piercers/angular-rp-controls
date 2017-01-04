@@ -39,6 +39,7 @@ import {RpFormArrayLabelComponent} from './rp-form-array-label.component';
   ],
   exports: [
     RpControlComponent,
+    RpControlErrorsComponent,
     RpSelectControlComponent,
     RpInputControlComponent,
     RpTextareaControlComponent,

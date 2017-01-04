@@ -83,6 +83,7 @@ export class AppComponent {
     checkboxesControl: [],
     address: this.fb.group({
       street: ['1234 Main Street'],
+      street2: [''],
       city: [''],
       state: [''],
       zip: [''],

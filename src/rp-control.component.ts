@@ -17,7 +17,23 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import {FormControl, FormControlName} from '@angular/forms';
-import {castArray, compact, concat, defaultTo, flatten, flow, forEach, isEmpty, isNumber, map, uniqueId, size} from 'lodash/fp';
+import {
+  castArray,
+  compact,
+  concat,
+  defaultTo,
+  flatten,
+  flow,
+  forEach,
+  isBoolean,
+  isEmpty,
+  isNumber,
+  map,
+  negate,
+  overSome,
+  uniqueId,
+  size,
+} from 'lodash/fp';
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ReplaySubject} from 'rxjs/ReplaySubject';
@@ -28,18 +44,8 @@ import 'rxjs/add/operator/startWith';
 import {RpControlsSettingsService} from './rp-controls-settings.service';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 
-// TODO These should work through RpControlsSettingsService somehow
-const gray = '#d6d6d6';
-const grayDark = '#666';
-const paddingBase = '.33rem';
-const borderRadius = '3px';
-const placeholder = gray;
-const text = grayDark;
-const faded = 'rgba(0, 0, 0, 0.05)';
-const primary = '#F28525';
-const error = 'red';
-const labelHeight = '1.2rem';
-
+// TODO Scope ::placeholder selectors to be children of rp-control
+// TODO Fade label in <rp-select-control> if wider than button so caret doesn't wrap
 // TODO Should '.is-disabled' be part of this?
 // - Probably - all fields can be disabled
 @Component({
@@ -62,26 +68,26 @@ const labelHeight = '1.2rem';
 
     /* Placeholders */
     ::placeholder {
-      color: ${placeholder};
+      color: #d6d6d6;
     }
     ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-      color: ${placeholder};
+      color: #d6d6d6;
     }
     :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-      color: ${placeholder};
+      color: #d6d6d6;
     }
     ::-moz-placeholder { /* Mozilla Firefox 19+ */
-      color: ${placeholder};
+      color: #d6d6d6;
     }
     :-ms-input-placeholder { /* Internet Explorer 10-11 */
-      color: ${placeholder};
+      color: #d6d6d6;
     }
     ::-webkit-datetime-edit-fields-wrapper {
-      color: ${placeholder};
+      color: #d6d6d6;
     }
 
     /* Dropdown */
-    .dropdown label { /* Here for viewEncapsulation: 'none' */
+    .dropdown label {
       display: block;
       white-space: nowrap;
     }
@@ -89,14 +95,14 @@ const labelHeight = '1.2rem';
       display: block;
     }
 
-  	/**
-  	 * Default Theme
-  	 */
-    rp-control.rp-control--default {
+    /**
+     * Default Theme
+     */
+    .rp-control--default {
       position: relative;
       display: block;
     }
-    rp-control.rp-control--default:not(.is-nested) {
+    .rp-control--default:not(.is-nested) {
       padding-top: .33rem;
       padding-bottom: .33rem;
     }
@@ -109,73 +115,73 @@ const labelHeight = '1.2rem';
       display: block;
       position: absolute;
       bottom: .2rem;
-      right: ${paddingBase};
-      left: ${paddingBase};
+      right: .33rem;
+      left: .33rem;
       height: 1px;
-      background-color: ${placeholder};
+      background-color: #d6d6d6;
       transition: all .2s ease-out;
     }
     .rp-control--default.has-focus:not(.is-inline):not(.is-nested) > .rp-control__input-container::after {
       height: 2px;
-      background-color: ${primary};
+      background-color: #F28525;
     }
 
-  	.rp-control--default .rp-control__input,
-  	.rp-control--default .rp-control__select-btn {
+    .rp-control--default .rp-control__input,
+    .rp-control--default .rp-control__select-btn {
       font-size: 1rem;
       font-family: inherit;
       margin: 0 0 .2rem;
-      padding: ${paddingBase};
+      padding: .33rem;
       border: 0;
-      border-radius: ${borderRadius};
+      border-radius: 3px;
       background: transparent;
       outline: none;
-  	}
+    }
 
-  	/* Placeholders */
-    .rp-control--default .rp-control__placeholder {
+    /* Placeholders */
+    .rp-control--default.has-label .rp-control__placeholder {
       opacity: 0;
     }
-    ::placeholder {
+    .rp-control--default.has-label ::placeholder {
       opacity: 0;
     }
-    ::-webkit-input-placeholder {
+    .rp-control--default.has-label ::-webkit-input-placeholder {
       opacity: 0;
     }
-    :-moz-placeholder {
+    .rp-control--default.has-label :-moz-placeholder {
       opacity: 0;
     }
-    ::-moz-placeholder {
+    .rp-control--default.has-label ::-moz-placeholder {
       opacity: 0;
     }
-    :-ms-input-placeholder {
+    .rp-control--default.has-label :-ms-input-placeholder {
       opacity: 0;
     }
-    .rp-control--default:not(.has-focus):not(.has-value) ::-webkit-datetime-edit-fields-wrapper { /* This class also handles value dislplay so change accordingly */
+    .rp-control--default.has-label:not(.has-focus):not(.has-value) ::-webkit-datetime-edit-fields-wrapper { /* This class also handles value dislplay so change accordingly */
       opacity: 0;
     }
     .rp-control--default.has-value ::-webkit-datetime-edit-fields-wrapper {
-      color: ${text};
+      color: #666;
     }
     .rp-control--default.has-focus .rp-control__placeholder {
       opacity: 1;
     }
-    .has-focus ::placeholder {
+    .rp-control--default.has-focus ::placeholder {
       opacity: 1;
     }
-    .has-focus ::-webkit-input-placeholder {
+    .rp-control--default.has-focus ::-webkit-input-placeholder {
       opacity: 1;
     }
-    .has-focus :-moz-placeholder {
+    .rp-control--default.has-focus :-moz-placeholder {
       opacity: 1;
     }
-    .has-focus ::-moz-placeholder {
+    .rp-control--default.has-focus ::-moz-placeholder {
       opacity: 1;
     }
-    .has-focus :-ms-input-placeholder {
+    .rp-control--default.has-focus :-ms-input-placeholder {
       opacity: 1;
     }
-    .has-focus ::-webkit-datetime-edit-fields-wrapper {
+    .rp-control--default.has-focus ::-webkit-datetime-edit-fields-wrapper {
       opacity: 1;
     }
 
@@ -185,14 +191,17 @@ const labelHeight = '1.2rem';
       display: block;
       position: relative;
       top: 0;
-      left: ${paddingBase};
-      height: ${labelHeight};
+      left: .33rem;
+      height: 1.2rem;
       transition: all .2s ease-out;
       cursor: pointer;
     }
     .rp-control--default:not(.is-nested) > .rp-control__label,
     .rp-control--default:not(.is-nested) legend {
       font-size: .8em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .rp-control--default:not(.has-value):not(.has-focus):not(.is-inline) > .rp-control__label {
       top: 1.6rem;
@@ -200,10 +209,10 @@ const labelHeight = '1.2rem';
       font-size: 1em;
     }
     .rp-control--default.has-focus:not(.is-inline) > .rp-control__label {
-      color: ${primary};
+      color: #F28525;
     }
     .rp-control--default.has-errors.was-touched > .rp-control__label {
-      color: ${error};
+      color: red;
     }
 
     /* Text Inputs */
@@ -212,32 +221,42 @@ const labelHeight = '1.2rem';
       width: 100%;
     }
 
-  	/* Textarea */
+    /* Textarea */
     .rp-control--default .CodeMirror-placeholder {
-      color: ${placeholder};
+      color: #d6d6d6;
       opacity: 1;
     }
     .rp-control--default .CodeMirror,
     .rp-control--default .editor-toolbar {
-      border-color: ${placeholder};
+      border-color: #d6d6d6;
       opacity: 1;
     }
     .rp-control--default .editor-toolbar a {
-    	color: ${text} !important; /* Override SimpleMDE styles */
+      color: #666 !important; /* Override SimpleMDE styles */
     }
     .rp-control--default .editor-statusbar {
-      color: ${placeholder};
+      color: #d6d6d6;
     }
 
     /* Select */
     .rp-control--default .rp-control__select-btn {
+      display: flex;
       width: 100%;
       text-align: left;
     }
+    .rp-control--default .rp-control__select-btn > * {
+      flex: 1;
+    }
+    .rp-control--default .rp-control__select-btn > *:not(.rp-control__select-btn-icon) {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .rp-control--default .rp-control__select-btn-icon {
-      float: right;
       transform: rotate(0deg);
       transition: .2s all ease-out;
+      flex-grow: 0;
+      padding: 0 .33rem;
     }
     .rp-control--default.has-focus .rp-control__select-btn-icon {
       transform: rotate(180deg);
@@ -246,7 +265,7 @@ const labelHeight = '1.2rem';
       pointer-events: none;
     }
 
-  	/* Dropdown */
+    /* Dropdown */
     .rp-control--default .dropdown {
       position: absolute;
       top: -0.35rem;
@@ -261,20 +280,20 @@ const labelHeight = '1.2rem';
     .rp-control--default .rp-control__list-item {
       display: block;
       padding: .66rem;
-      border-bottom: 1px solid ${placeholder};
+      border-bottom: 1px solid #d6d6d6;
     }
     .rp-control--default .rp-control__list-item.is-checked {
-      background-color: ${faded};
+      background-color: rgba(0, 0, 0, .05);
     }
     .rp-control--default .rp-control__list-item:last-child {
       border-bottom: 0;
     }
     .rp-control--default .rp-control__list-item .rp-control__input-container {
       float: right;
-      padding-left: calc(${paddingBase} * 2);
+      padding-left: calc(.33rem * 2);
     }
 
-  	/* Radios */
+    /* Radios */
     .rp-control--default .rp-control__radio label {
       display: block;
       width: 100%;
@@ -284,7 +303,7 @@ const labelHeight = '1.2rem';
       margin: 0;
     }
 
-  	/* Checkboxes */
+    /* Checkboxes */
     .rp-control--checkbox.rp-control--default {
       display: flex;
       width: 100%;
@@ -297,12 +316,12 @@ const labelHeight = '1.2rem';
       display: block;
       flex-basis: 100%;
       height: 1rem;
-      padding-left: ${paddingBase};
-      padding-right: ${paddingBase};
+      padding-left: .33rem;
+      padding-right: .33rem;
       font-size: .8em;
     }
     .rp-control--default.was-touched rp-control-errors {
-      color: ${error};
+      color: red;
     }
     .rp-control--default rp-control-errors ul {
       margin: 0;
@@ -316,6 +335,7 @@ const labelHeight = '1.2rem';
     .rp-control--app {
       font-family: sans-serif;
     }
+
   `],
   template: `
     <label
@@ -363,6 +383,8 @@ export class RpControlComponent implements OnChanges, OnInit, AfterContentInit {
 
   @HostBinding('class.has-errors') hasErrors = false;
 
+  @HostBinding('class.has-label') hasLabel = true;
+
   id = new ReplaySubject(1);
 
   private control: FormControl;
@@ -382,9 +404,13 @@ export class RpControlComponent implements OnChanges, OnInit, AfterContentInit {
     @Optional() @SkipSelf() private rpControl: RpControlComponent // Exists if <rp-control> is nested under another <rp-control>
   ) {}
 
-  ngOnChanges({value}: SimpleChanges) {
+  ngOnChanges({value, label}: SimpleChanges) {
     if (value) {
-      this.hasValue = isNumber(value.currentValue) || !isEmpty(value.currentValue);
+      this.hasValue = overSome([isBoolean, isNumber, negate(isEmpty)])(value.currentValue);
+    }
+
+    if (label) {
+      this.hasLabel = !isEmpty(label.currentValue);
     }
   }
 
