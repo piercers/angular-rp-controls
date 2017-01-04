@@ -15,4 +15,3 @@ A set of Angular version 2+ form controls.
   - Is this a validation thing?
 - [ ] Requiring `href` in Links control prevented form submit, but didn't show any errors
 - [ ] Select control tabbable
-- [ ] Publish to NPM

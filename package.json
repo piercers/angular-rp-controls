@@ -24,7 +24,6 @@
     "test": "ng test",
     "test.coverage": "ng test --code-coverage"
   },
-  "private": true,
   "peerDependencies": {
     "@angular/common": "^2.3.1",
     "@angular/core": "^2.3.1",
