@@ -8,6 +8,7 @@ A set of Angular version 2+ form controls.
 `npm run build`
 
 ## TODO
+- [ ] Republish to npm as already built package
 - [ ] SimpleMDE's styles in build step
 - [ ] Check `<input type="date">` (and others?) compatibility
   - Create new input that uses setter / getter for formatting correctly
