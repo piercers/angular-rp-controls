@@ -53,7 +53,7 @@ import {RpFormArrayLabelComponent} from './rp-form-array-label.component';
   ],
 })
 export class RpControlsModule {
-  static forRoot(config = {}) {
+  static forRoot(config: RpControlsConfig) {
     return {
       ngModule: RpControlsModule,
       providers: [
