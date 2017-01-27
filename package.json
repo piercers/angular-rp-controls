@@ -1,6 +1,6 @@
 {
   "name": "angular-rp-controls",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "main": "./bundles/rp-controls.umd.js",
   "module": "./index.js",
   "author": "Ryan S Pierce <ry@nspierce.com> (http://ryanspierce.com)",
