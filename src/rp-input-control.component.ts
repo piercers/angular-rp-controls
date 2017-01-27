@@ -60,16 +60,27 @@ export class RpInputControlComponent implements ControlValueAccessor {
    */
   @Input() errors = {};
 
+  private _value: string;
+
+  /**
+   * When not using @angular/forms, pass value in through this input
+   */
+  @Input() set value(x) {
+    this._value = x;
+  }
+
+  get value() {
+    return this._value;
+  }
+
   /**
    * Output control value as it changes
    */
-  @Output() changes = new EventEmitter();
+  @Output() changes = new EventEmitter(); // TODO Rename valueChange
 
   hasFocus = false;
 
   touched = false;
-
-  value: any;
 
   onChange = (x?: any) => {};
 
