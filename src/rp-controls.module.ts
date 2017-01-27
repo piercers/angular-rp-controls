@@ -16,6 +16,7 @@ import {RpControlsOverlayComponent} from './ui/rp-controls-overlay.component';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 import {RpFormArrayAddDirective} from './rp-form-array-add.directive';
 import {RpFormArrayLabelComponent} from './rp-form-array-label.component';
+import {RpTimeControlComponent} from './rp-time-control.component';
 
 @NgModule({
   imports: [
@@ -36,6 +37,7 @@ import {RpFormArrayLabelComponent} from './rp-form-array-label.component';
     RpFormArrayAddDirective,
     RpFormArrayLabelComponent,
     RpFormGroupDirective,
+    RpTimeControlComponent,
   ],
   exports: [
     RpControlComponent,
@@ -50,6 +52,7 @@ import {RpFormArrayLabelComponent} from './rp-form-array-label.component';
     RpFormArrayAddDirective,
     RpFormArrayLabelComponent,
     RpFormGroupDirective,
+    RpTimeControlComponent,
   ],
 })
 export class RpControlsModule {

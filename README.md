@@ -9,10 +9,6 @@ A set of Angular version 2+ form controls.
 
 ## TODO
 - [ ] Bug: `<rp-input-control type="password"></rp-input-control>` has a value of `undefined`
-- [ ] Check `<input type="date">` (and others?) compatibility
-  - Create new input that uses setter / getter for formatting correctly
-  - Firefox doesn't support type="date" and therefore submits the wrong data
-  - Is this a validation thing?
 - [ ] `input="time"` validation and standardization
 - [ ] Min / Max on `type="number"`
 - [ ] URL formatting on `type="url"`?
