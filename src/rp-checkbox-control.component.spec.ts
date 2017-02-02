@@ -22,7 +22,7 @@ describe('RpCheckboxControlComponent', () => {
   let fixture: ComponentFixture<TestComponent>;
   let testComponent: TestComponent;
   let component: RpCheckboxControlComponent;
-  let input: DebugElement;
+  let host: DebugElement;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -37,16 +37,15 @@ describe('RpCheckboxControlComponent', () => {
 
     testComponent = fixture.componentInstance;
 
-    component = fixture.debugElement.query(By.directive(RpCheckboxControlComponent))
-      .injector.get(RpCheckboxControlComponent);
+    host = fixture.debugElement.query(By.directive(RpCheckboxControlComponent));
 
-    input = fixture.debugElement.query(By.css('input'));
+    component = host.injector.get(RpCheckboxControlComponent);
   });
 
   it('should be marked as "touched" after input has been clicked', () => {
     spyOn(component, 'onTouched');
     expect(component.touched).toBe(false);
-    check(input);
+    check(host);
     expect(component.touched).toBe(true);
     expect(component.onTouched).toHaveBeenCalled();
   });
@@ -54,7 +53,7 @@ describe('RpCheckboxControlComponent', () => {
   it('should update "checked" after input has been clicked', () => {
     spyOn(component, 'onChange');
     expect(component.checked).not.toBe(checked);
-    check(input);
+    check(host);
     expect(component.checked).toBe(checked);
     expect(component.onChange).toHaveBeenCalledWith(checked);
   });

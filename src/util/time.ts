@@ -1,4 +1,4 @@
-import {filter, flow, head, join, map, mapValues, reject, split, toLower} from 'lodash/fp';
+import {filter, flow, head, join, map, mapValues, reject, split, toLower, toString} from 'lodash/fp';
 
 /**
  * Parse time string to determine if it's AM or PM
@@ -53,5 +53,5 @@ export const parseTime = flow( // (''): ''
 
     return {hour, minute};
   },
-  formatTime,
+  formatTime
 );

@@ -8,13 +8,11 @@ import {RpInputControlComponent} from './rp-input-control.component';
 
 @Component({
   template: `
-    <rp-input-control [formControl]="control" (changes)="onChanges($event)"></rp-input-control>
+    <rp-input-control [formControl]="control"></rp-input-control>
   `,
 })
 class TestComponent {
   control = new FormControl();
-
-  onChanges(value) {}
 }
 
 describe('RpInputControlComponent', () => {
@@ -43,25 +41,9 @@ describe('RpInputControlComponent', () => {
     input = fixture.debugElement.query(By.css('input'));
   });
 
-  it('should have a "changes" output emit on input', () => {
-    spyOn(testComponent, 'onChanges');
-    component.onInput(value);
-    expect(testComponent.onChanges).toHaveBeenCalledWith(value);
-  });
-
   it('should track its "touched" state', () => {
     expect(component.touched).toBe(false);
     input.triggerEventHandler('blur', {});
     expect(component.touched).toBe(true);
-  });
-
-  it('should accept a text input', () => {
-    spyOn(component, 'onChange');
-    expect(component.value).not.toBe(value);
-    input.triggerEventHandler('input', {
-      target: {value},
-    });
-    expect(component.value).toBe(value);
-    expect(component.onChange).toHaveBeenCalledWith(value);
   });
 });

@@ -1,5 +1,17 @@
-import {Component, Input, Output, EventEmitter, forwardRef} from '@angular/core';
+import {Component, Input, forwardRef} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl} from '@angular/forms';
+
+import {parseTime} from './util/time';
+
+const formatType = (type, value) => {
+  switch (type) {
+    case 'time':
+      return parseTime(value);
+
+    default:
+      return value;
+  }
+};
 
 @Component({
   selector: 'rp-input-control',
@@ -11,7 +23,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl} from '@angular/for
   template: `
     <rp-control
       [label]="label"
-      [value]="value"
+      [value]="_value"
       [hasFocus]="hasFocus"
       [touched]="touched"
       [errors]="errors"
@@ -60,27 +72,16 @@ export class RpInputControlComponent implements ControlValueAccessor {
    */
   @Input() errors = {};
 
-  private _value: string;
-
   /**
-   * When not using @angular/forms, pass value in through this input
+   * Internal, formatted value
    */
-  @Input() set value(x) {
-    this._value = x;
-  }
-
-  get value() {
-    return this._value;
-  }
-
-  /**
-   * Output control value as it changes
-   */
-  @Output() changes = new EventEmitter(); // TODO Rename valueChange
+  _value = '';
 
   hasFocus = false;
 
   touched = false;
+
+  value = '';
 
   onChange = (x?: any) => {};
 
@@ -98,14 +99,17 @@ export class RpInputControlComponent implements ControlValueAccessor {
   /**
    * Report changes on input
    */
-  onInput(value) {
-    this.value = value;
-    this.onChange(value);
-    this.changes.emit(value);
+  onInput(value, fromParent = false) {
+    const formatted = formatType(this.type, value);
+    if (fromParent) { // Update came from FormControl or NgModel
+      this.value = formatted;
+    }
+    this._value = formatted;
+    this.onChange(formatted);
   }
 
   writeValue(value) {
-    this.value = value;
+    this.onInput(value, true);
   }
 
   registerOnChange(fn) {
