@@ -2,7 +2,6 @@ import {Component, Input, forwardRef, ContentChildren} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {castArray} from 'lodash/fp';
 
-import {RpControlsSettingsService} from './rp-controls-settings.service';
 import {RpOptionComponent} from './rp-option.component';
 
 const getSelectedLabels = (options = [], selected = '') => castArray(selected)
@@ -23,22 +22,7 @@ const getSelectedLabels = (options = [], selected = '') => castArray(selected)
     useExisting: forwardRef(() => RpSelectControlComponent),
     multi: true,
   }],
-  styles: [`
-    :host {
-      position: relative;
-    }
-
-    .dropdown {
-      position: absolute;
-      left: 0;
-      z-index: 10;
-      box-shadow: 0 0 1px rgba(0,0,0,0.15);
-      background-color: white;
-    }
-  `],
   template: `
-    <rp-controls-overlay [open]="isOpen" (click)="open()" [opacity]="dropdown.opacity"></rp-controls-overlay>
-
     <rp-control
       [value]="selected"
       [hasFocus]="isOpen"
@@ -53,7 +37,7 @@ const getSelectedLabels = (options = [], selected = '') => castArray(selected)
         <span class="rp-control__select-btn-icon">▾</span>
       </button>
 
-      <div *ngIf="isOpen" class="dropdown">
+      <rp-controls-dropdown [open]="isOpen" (overlayClick)="open()" class="is-absolute">
         <!-- Single Select -->
         <rp-radios-control *ngIf="limit === 1" [value]="selected" (changes)="select($event); open()">
           <rp-option *ngFor="let x of options" [value]="x.value" [label]="x.label"></rp-option>
@@ -68,7 +52,7 @@ const getSelectedLabels = (options = [], selected = '') => castArray(selected)
         <fieldset *ngIf="!options.length">
           <div class="rp-control__list-item">No options.</div>
         </fieldset>
-      </div>
+      </rp-controls-dropdown>
     </rp-control>
   `,
 })
@@ -103,13 +87,9 @@ export class RpSelectControlComponent implements ControlValueAccessor {
 
   touched = false;
 
-  dropdown = this.settings.dropdown;
-
   onChange = (x?: any) => {};
 
   onTouched = () => {};
-
-  constructor(private settings: RpControlsSettingsService) {}
 
   /**
    * Comma-separated list of selected value labels

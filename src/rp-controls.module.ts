@@ -13,6 +13,7 @@ import {RpRadiosControlComponent} from './rp-radios-control.component';
 import {RpCheckboxControlComponent} from './rp-checkbox-control.component';
 import {RpCheckboxesControlComponent} from './rp-checkboxes-control.component';
 import {RpControlsOverlayComponent} from './ui/rp-controls-overlay.component';
+import {RpControlsDropdownComponent} from './ui/rp-controls-dropdown.component';
 import {RpFormGroupDirective} from './rp-form-group.directive';
 import {RpFormArrayAddDirective} from './rp-form-array-add.directive';
 import {RpFormArrayLabelComponent} from './rp-form-array-label.component';
@@ -36,6 +37,7 @@ import {RpFormArrayLabelComponent} from './rp-form-array-label.component';
     RpFormArrayAddDirective,
     RpFormArrayLabelComponent,
     RpFormGroupDirective,
+    RpControlsDropdownComponent,
   ],
   exports: [
     RpControlComponent,
@@ -50,6 +52,7 @@ import {RpFormArrayLabelComponent} from './rp-form-array-label.component';
     RpFormArrayAddDirective,
     RpFormArrayLabelComponent,
     RpFormGroupDirective,
+    RpControlsDropdownComponent,
   ],
 })
 export class RpControlsModule {
