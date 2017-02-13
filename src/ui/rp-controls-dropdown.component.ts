@@ -21,11 +21,15 @@ import {RpControlsSettingsService} from '../rp-controls-settings.service';
     rp-controls-overlay {
       z-index: initial !important;
     }
+
+    .content {
+      position: relative;
+    }
   `],
   template: `
     <rp-controls-overlay [open]="open" (click)="overlayClick.emit()" [opacity]="dropdown.opacity"></rp-controls-overlay>
 
-    <div>
+    <div class="content">
       <ng-content></ng-content>
     </div>
   `,
