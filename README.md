@@ -20,6 +20,7 @@ A set of Angular version 2+ form controls.
 - [ ] SimpleMDE's styles in build step
 - [ ] Requiring `href` in Links control prevented form submit, but didn't show any errors
 - [ ] Select control tabbable
+- [ ] RpToggleControlComponent?
 - [ ] RpUiModule
 
 ### IDEA

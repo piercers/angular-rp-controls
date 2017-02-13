@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy, Input, Output, EventEmitter} from '@angular/core';
+import {Component, ChangeDetectionStrategy, Input, Output, EventEmitter, HostBinding} from '@angular/core';
 
 import {RpControlsSettingsService} from '../rp-controls-settings.service';
 
@@ -6,34 +6,35 @@ import {RpControlsSettingsService} from '../rp-controls-settings.service';
   selector: 'rp-controls-dropdown',
   styles: [`
     :host {
-      position: relative;
-      width: 100%;
-    }
-
-    :host.is-absolute {
       position: absolute;
-      top: 0;
-    }
-
-    .dropdown {
-      position: absolute;
+      display: none;
       left: 0;
-      z-index: 10;
+      z-index: 1000;
       box-shadow: 0 0 1px rgba(0,0,0,0.15);
       background-color: white;
+    }
+
+    :host.is-open {
+      display: block;
+    }
+
+    rp-controls-overlay {
+      z-index: initial !important;
     }
   `],
   template: `
     <rp-controls-overlay [open]="open" (click)="overlayClick.emit()" [opacity]="dropdown.opacity"></rp-controls-overlay>
 
-    <div *ngIf="open" class="dropdown">
+    <div>
       <ng-content></ng-content>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RpControlsDropdownComponent {
-  @Input() open = false;
+  @Input()
+  @HostBinding('class.is-open')
+  open = false;
 
   @Output() overlayClick = new EventEmitter();
 

@@ -22,6 +22,12 @@ const getSelectedLabels = (options = [], selected = '') => castArray(selected)
     useExisting: forwardRef(() => RpSelectControlComponent),
     multi: true,
   }],
+  styles: [`
+    rp-controls-dropdown {
+      top: -.3em;
+      left: -.3em;
+    }
+  `],
   template: `
     <rp-control
       [value]="selected"

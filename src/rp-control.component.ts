@@ -277,6 +277,7 @@ import {RpFormGroupDirective} from './rp-form-group.directive';
 
     /* List Items */
     .rp-control--default .rp-control__list-item {
+      position: relative;
       display: block;
       padding: .66rem;
       border-bottom: 1px solid #d6d6d6;
@@ -299,7 +300,7 @@ import {RpFormGroupDirective} from './rp-form-group.directive';
     }
     .rp-control--default .rp-control__radio input {
       float: right;
-      margin: 0;
+      margin: 0 0 0 calc(.33rem * 2);
     }
 
     /* Checkboxes */
@@ -307,6 +308,9 @@ import {RpFormGroupDirective} from './rp-form-group.directive';
       display: flex;
       width: 100%;
       justify-content: space-between;
+    }
+
+    .is-toggle > .rp-control--checkbox {
       flex-wrap: wrap;
     }
 
